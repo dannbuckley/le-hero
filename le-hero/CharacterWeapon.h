@@ -44,16 +44,16 @@ namespace le_hero {
 	};
 
 	typedef struct {
-		uint8_t collection_index;
-		enum WeaponCategory category;
-		enum WeaponHandling handling;
-		enum WeaponWeight weight;
-		enum WeaponRange range;
-		enum WeaponDamageType damage_type;
+		uint8_t collection_index = 0;
+		enum WeaponCategory category = WeaponCategory::NO_CATEGORY;
+		enum WeaponHandling handling = WeaponHandling::ONE_HANDED;
+		enum WeaponWeight weight = WeaponWeight::LIGHT;
+		enum WeaponRange range = WeaponRange::MELEE;
+		enum WeaponDamageType damage_type = WeaponDamageType::PHYSICAL;
 		std::string name;
-		enum CharacterElements element;
-		uint8_t strength;
-		bool can_inflict_status;
-		uint8_t inflicted_status;
+		enum CharacterElements element = CharacterElements::BASIC;
+		uint8_t strength = 0;
+		bool can_inflict_status = false;
+		uint8_t inflicted_status = 0;
 	} CharacterWeapon;
 }

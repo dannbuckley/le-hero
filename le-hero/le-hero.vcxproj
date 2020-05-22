@@ -147,13 +147,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Character.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="le-hero.cpp" />
     <ClCompile Include="LuaHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterElement.h" />
+    <ClInclude Include="CharacterPassiveAbility.h" />
     <ClInclude Include="CharacterRank.h" />
+    <ClInclude Include="CharacterSpecialAbility.h" />
     <ClInclude Include="CharacterStatus.h" />
     <ClInclude Include="CharacterWeapon.h" />
     <ClInclude Include="Game.h" />

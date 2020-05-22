@@ -21,10 +21,11 @@ namespace le_hero {
 
 	typedef struct {
 		std::string name;
-		uint8_t armor_percent;
-		uint8_t armor_turns;
-		uint8_t base_attack;
-		uint8_t base_speed;
-		uint8_t base_health;
+		uint8_t armor_percent = 0;
+		uint8_t armor_turns = 0;
+		uint8_t base_attack = 0;
+		uint8_t base_speed = 0;
+		uint8_t base_health = 0;
+		enum CharacterElements element_identifier = CharacterElements::BASIC;
 	} CharacterElement;
 }

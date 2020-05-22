@@ -19,7 +19,7 @@ namespace le_hero {
 	typedef struct {
 		std::string name;
 		std::string effect;
-		uint8_t effect_length;
-		enum CharacterStatusTypes status_type;
+		uint8_t effect_length = 0;
+		enum CharacterStatusTypes status_type = CharacterStatusTypes::HEALTH_INFLUENCE;
 	} CharacterStatus;
 }

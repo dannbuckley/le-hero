@@ -21,8 +21,8 @@ namespace le_hero {
 
 	typedef struct {
 		std::string name;
-		uint8_t attack_boost;
-		uint8_t speed_boost;
-		uint8_t health_boost;
+		uint8_t attack_boost = 0;
+		uint8_t speed_boost = 0;
+		uint8_t health_boost = 0;
 	} CharacterRank;
 }

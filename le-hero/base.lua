@@ -114,6 +114,39 @@ weapons[53] = {CollectionIndex=5, Category=7, Handling=1, Weight=1, Range=1, Dam
 weapons[54] = {CollectionIndex=6, Category=7, Handling=1, Weight=1, Range=1, DamageType=1, Name="Staff of Rage", Element=6, Strength=95, CanInflictStatus=true, InflictedStatus=5}
 weapons[55] = {CollectionIndex=7, Category=7, Handling=1, Weight=2, Range=1, DamageType=1, Name="Staff of Creation", Element=6, Strength=100, CanInflictStatus=true, InflictedStatus=11}
 
+-- Define character passive abilities
+passive_abilities = {}
+passive_abilities[0] = {Name="Passive - Basic", Effect="When Health drops below 50%, the Attack stat is doubled.", NativeElement=0}
+passive_abilities[1] = {Name="Passive - Earth", Effect="Power of close-range attacks increase by 30% when battling in Earth terrain.", NativeElement=1}
+passive_abilities[2] = {Name="Passive - Air", Effect="Power of long-range attacks increase by 30% when battling in Air terrain.", NativeElement=2}
+passive_abilities[3] = {Name="Passive - Fire", Effect="Attack is increased by 10% when battling in Fire terrain.", NativeElement=3}
+passive_abilities[4] = {Name="Passive - Water", Effect="Speed is increased by 10% when battling in Water terrain.", NativeElement=4}
+passive_abilities[5] = {Name="Passive - Mystic", Effect="", NativeElement=5}
+passive_abilities[6] = {Name="Passive - Alpha", Effect="When passing a turn, the Character recovers 25% of it's maximum health.", NativeElement=6}
+
+-- Define character special abilties
+num_special_abilities = 19
+special_abilities = {}
+special_abilities[0] = {Name="Protect", Effect="Protects character from any damage.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[1] = {Name="Recovery", Effect="Recover 25% of maximum health.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[2] = {Name="Tricky Mirror", Effect="Transfers the current inflicted status (if one) to the enemy.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[3] = {Name="Revenge", Effect="The lower the user's current health is, the greater the damage.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[4] = {Name="Deadly Accuracy", Effect="The user deals massive damage by using its long-range weapon.", CostToLearn=0, WeaponReqs=1, ElementSupport=63}
+special_abilities[5] = {Name="Flaming Vortex", Effect="The user conjures a flaming vortex that damages and burns the target.", CostToLearn=0, WeaponReqs=0, ElementSupport=4}
+special_abilities[6] = {Name="Inferno", Effect="The user creates a powerful inferno to damage the enemy.", CostToLearn=0, WeaponReqs=0, ElementSupport=4}
+special_abilities[7] = {Name="Hurricane", Effect="The user conjures a hurricane which lifts up and damages the opponent.", CostToLearn=0, WeaponReqs=0, ElementSupport=10}
+special_abilities[8] = {Name="Whirlpool", Effect="The user conjures a whirlpool which damages the enemy.", CostToLearn=0, WeaponReqs=0, ElementSupport=2}
+special_abilities[9] = {Name="Landslide", Effect="The user conjures a landslide which damages and traps the enemy.", CostToLearn=0, WeaponReqs=0, ElementSupport=16}
+special_abilities[10] = {Name="Extinguish", Effect="If the enemy is of the Fire element, this attack doubles in damage.", CostToLearn=0, WeaponReqs=0, ElementSupport=18}
+special_abilities[11] = {Name="Scald", Effect="The user douses the enemy with scalding hot water.", CostToLearn=0, WeaponReqs=0, ElementSupport=2}
+special_abilities[12] = {Name="Speedster", Effect="The faster the user is, the higher the damage.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[13] = {Name="Power Trick", Effect="This special ability uses the enemy's attack stat against them.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[14] = {Name="Platinum Power Play", Effect="The user deals massive damage by using its close-range weapon.", CostToLearn=0, WeaponReqs=2, ElementSupport=63}
+special_abilities[15] = {Name="Guard Stance", Effect="The user guards themselves to avoid any damage.", CostToLearn=0, WeaponReqs=0, ElementSupport=16}
+special_abilities[16] = {Name="Honor Amongst Thieves", Effect="If the character and the enemy are of the same element, both characters will restore 10% of their health. However, if they are not of the same element, the character that uses this ability will steal 10% of the enemy's health(damage does not bypass armor).", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[17] = {Name="Good Samaritan", Effect="Heals the status of an enemy, if any.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+special_abilities[18] = {Name="Call To Arms", Effect="Self-inflicts 'Killing Spree' status for a variable amount of turns. The amount of turns depends on the strength of the currently attached weapon.", CostToLearn=0, WeaponReqs=0, ElementSupport=63}
+
 -- Returns requested character element
 function GetElement(n)
 	return elements[n]
@@ -132,4 +165,14 @@ end
 -- Returns requested weapon
 function GetWeapon(n)
 	return weapons[n]
+end
+
+-- Returns requested passive ability
+function GetPassiveAbility(n)
+	return passive_abilities[n]
+end
+
+-- Returns requested special ability
+function GetSpecialAbility(n)
+	return special_abilities[n]
 end
