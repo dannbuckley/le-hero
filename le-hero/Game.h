@@ -19,6 +19,7 @@ namespace le_hero {
 		std::vector<CharacterWeapon> weapons;
 		std::vector<CharacterPassiveAbility> passive_abilities;
 		std::vector<CharacterSpecialAbility> special_abilities;
+		std::vector<CharacterItem> items;
 
 	public:
 		Game(std::string settings_file);
@@ -29,10 +30,12 @@ namespace le_hero {
 		CharacterWeapon get_weapon(uint8_t index);
 		CharacterPassiveAbility get_passive_ability(uint8_t index);
 		CharacterSpecialAbility get_special_ability(uint8_t index);
+		CharacterItem get_item(uint8_t index);
 
 		size_t get_num_statuses();
 		size_t get_num_weapons();
 		size_t get_num_special_abilities();
+		size_t get_num_items();
 	};
 }
 

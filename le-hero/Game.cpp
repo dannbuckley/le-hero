@@ -9,7 +9,14 @@ namespace le_hero {
     Game::Game(std::string settings_file)
     {
         lua_handler = std::make_unique<lua::LuaHandler>();
-        lua_handler->parse_settings_file(settings_file, elements, ranks, statuses, weapons, passive_abilities, special_abilities);
+        lua_handler->parse_settings_file(settings_file,
+            elements,
+            ranks,
+            statuses,
+            weapons,
+            passive_abilities,
+            special_abilities,
+            items);
     }
 
     CharacterElement Game::get_element(uint8_t index)
@@ -42,6 +49,11 @@ namespace le_hero {
         return special_abilities[index];
     }
 
+    CharacterItem Game::get_item(uint8_t index)
+    {
+        return items[index];
+    }
+
     size_t Game::get_num_statuses()
     {
         return statuses.size();
@@ -55,5 +67,10 @@ namespace le_hero {
     size_t Game::get_num_special_abilities()
     {
         return special_abilities.size();
+    }
+
+    size_t Game::get_num_items()
+    {
+        return items.size();
     }
 }

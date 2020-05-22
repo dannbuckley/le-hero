@@ -56,6 +56,12 @@
     <ClInclude Include="CharacterSpecialAbility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CharacterItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CharacterForgableItem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />

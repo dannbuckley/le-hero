@@ -155,6 +155,8 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterElement.h" />
+    <ClInclude Include="CharacterForgableItem.h" />
+    <ClInclude Include="CharacterItem.h" />
     <ClInclude Include="CharacterPassiveAbility.h" />
     <ClInclude Include="CharacterRank.h" />
     <ClInclude Include="CharacterSpecialAbility.h" />

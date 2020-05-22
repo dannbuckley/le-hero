@@ -256,7 +256,7 @@ namespace le_hero {
 							CharacterPassiveAbility passive_ability;
 							passive_ability.name = get_string_value_from_table("Name");
 							passive_ability.effect = get_string_value_from_table("Effect");
-							passive_ability.native_element = (CharacterElements)get_number_value_from_table("NativeElement");
+							passive_ability.native_element = (CharacterElements)i;
 
 							// push Passive Ability object to game environment vector
 							p_abil.push_back(passive_ability);
@@ -323,6 +323,43 @@ namespace le_hero {
 			return true;
 		}
 
+		bool LuaHandler::parse_items(std::vector<CharacterItem>& im)
+		{
+			// get number of Items from global lua variable
+			int num_items = (int)get_global_number_variable("num_items");
+
+			// use lua GetSpecialAbility function to retrieve each individual Item object
+			for (int i = 0; i < num_items; i++) {
+				lua_getglobal(L, "GetItem");
+				if (lua_isfunction(L, -1)) {
+					// push object index number onto lua stack
+					lua_pushnumber(L, i);
+
+					// call GetItem(i)
+					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+						if (lua_istable(L, -1)) {
+							// construct Item object from lua table
+							CharacterItem item;
+							item.name = get_string_value_from_table("Name");
+							item.effect = get_string_value_from_table("Effect");
+							item.item_type = (CharacterItemType)get_number_value_from_table("ItemType");
+							item.item_rank = (CharacterItemRank)get_number_value_from_table("ItemRank");
+							item.item_element = (CharacterElements)get_number_value_from_table("ItemElement");
+							item.cost = (uint32_t)get_number_value_from_table("Cost");
+							item.available_at_level = (uint8_t)get_number_value_from_table("AvailableAtLevel");
+
+							// push Special Ability object to game environment vector
+							im.push_back(item);
+
+							// pop table off lua stack
+							lua_pop(L, 1);
+						}
+					}
+				}
+			}
+			return false;
+		}
+
 		// Default constructor
 		LuaHandler::LuaHandler()
 		{
@@ -337,7 +374,8 @@ namespace le_hero {
 			std::vector<CharacterStatus>& s, 
 			std::vector<CharacterWeapon>& w,
 			std::vector<CharacterPassiveAbility>& p_abil,
-			std::vector<CharacterSpecialAbility>& s_abil)
+			std::vector<CharacterSpecialAbility>& s_abil,
+			std::vector<CharacterItem>& im)
 		{
 			// ensure integrity of settings file
 			if (!validate_lua(luaL_dofile(L, file_name.c_str()))) {
@@ -351,6 +389,7 @@ namespace le_hero {
 			parse_weapons(w);
 			parse_passive_abilities(p_abil);
 			parse_special_abilities(s_abil);
+			parse_items(im);
 
 			// close lua state machine
 			lua_close(L);

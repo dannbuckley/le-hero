@@ -100,8 +100,9 @@ namespace le_hero {
 
 	Character::Character(std::shared_ptr<Game> game_env): env(game_env)
 	{
-		// initialize Weapons Vault and Special Ability Library
+		// initialize Weapons Vault, Inventory, and Special Ability Library
 		this->vault = std::vector<uint8_t>(env->get_num_weapons());
+		this->inventory = std::vector<uint8_t>(env->get_num_items());
 		this->library = std::vector<bool>(env->get_num_special_abilities());
 
 		// initialize level to 1
