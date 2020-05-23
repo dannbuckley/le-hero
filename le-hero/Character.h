@@ -39,9 +39,6 @@ namespace le_hero {
         std::vector<bool> library;
 
         double _calculate_correction_value(uint8_t _level);
-        uint16_t _calculate_attack_stat();
-        uint16_t _calculate_speed_stat();
-        uint16_t _calculate_health_stat();
         uint16_t _calculate_exp_at_level(uint8_t _level);
         uint16_t _calculate_exp_to_next_level();
 
@@ -49,6 +46,14 @@ namespace le_hero {
 
     public:
         Character(std::shared_ptr<Game> game_env);
+
+        uint16_t calculate_attack_stat();
+        uint16_t calculate_speed_stat();
+        uint16_t calculate_health_stat();
+
+        CharacterElement get_element();
+        CharacterRank get_rank();
+        CharacterWeapon get_equipped_weapon();
 
         void gain_coins(uint32_t coin_yield);
         void gain_exp(uint16_t exp_yield);

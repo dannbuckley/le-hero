@@ -1,3 +1,8 @@
+/**
+ * Character.cpp
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #include <cmath>
 #include "Character.h"
 
@@ -10,39 +15,6 @@ namespace le_hero {
 		c /= 10000.0f;
 		c += alpha / 8.0f;
 		return c; // 0.0506 <= c <= 0.1751 (_level >= 1)
-	}
-
-	uint16_t Character::_calculate_attack_stat()
-	{
-		uint16_t base_attack = this->element.base_attack + this->rank.attack_boost;
-		double c = _calculate_correction_value(this->level);
-		double final_attack = base_attack;
-		final_attack += 50.0f;
-		final_attack /= 5.0f;
-		final_attack *= this->level;
-		return (uint16_t)nearbyint(final_attack * (1.0f - c));
-	}
-
-	uint16_t Character::_calculate_speed_stat()
-	{
-		uint16_t base_speed = this->element.base_speed + this->rank.speed_boost;
-		double c = _calculate_correction_value(this->level);
-		double final_speed = base_speed;
-		final_speed += 50.0f;
-		final_speed /= 5.0f;
-		final_speed *= this->level;
-		return (uint16_t)nearbyint(final_speed * (1.0f - c));
-	}
-
-	uint16_t Character::_calculate_health_stat()
-	{
-		uint16_t base_health = this->element.base_health + this->rank.health_boost;
-		double c = _calculate_correction_value(this->level);
-		double final_health = base_health;
-		final_health += 50.0f;
-		final_health /= 5.0f;
-		final_health *= this->level;
-		return (uint16_t)nearbyint(final_health * (1.0f - c));
 	}
 
 	uint16_t Character::_calculate_exp_at_level(uint8_t _level)
@@ -107,6 +79,54 @@ namespace le_hero {
 
 		// initialize level to 1
 		this->update_level();
+	}
+
+	uint16_t Character::calculate_attack_stat()
+	{
+		uint16_t base_attack = this->element.base_attack + this->rank.attack_boost;
+		double c = _calculate_correction_value(this->level);
+		double final_attack = base_attack;
+		final_attack += 50.0f;
+		final_attack /= 5.0f;
+		final_attack *= this->level;
+		return (uint16_t)nearbyint(final_attack * (1.0f - c));
+	}
+
+	uint16_t Character::calculate_speed_stat()
+	{
+		uint16_t base_speed = this->element.base_speed + this->rank.speed_boost;
+		double c = _calculate_correction_value(this->level);
+		double final_speed = base_speed;
+		final_speed += 50.0f;
+		final_speed /= 5.0f;
+		final_speed *= this->level;
+		return (uint16_t)nearbyint(final_speed * (1.0f - c));
+	}
+
+	uint16_t Character::calculate_health_stat()
+	{
+		uint16_t base_health = this->element.base_health + this->rank.health_boost;
+		double c = _calculate_correction_value(this->level);
+		double final_health = base_health;
+		final_health += 50.0f;
+		final_health /= 5.0f;
+		final_health *= this->level;
+		return (uint16_t)nearbyint(final_health * (1.0f - c));
+	}
+
+	CharacterElement Character::get_element()
+	{
+		return this->element;
+	}
+
+	CharacterRank Character::get_rank()
+	{
+		return this->rank;
+	}
+
+	CharacterWeapon Character::get_equipped_weapon()
+	{
+		return this->weapon;
 	}
 
 	// Adds coin_yield to the Character's amount of coins
