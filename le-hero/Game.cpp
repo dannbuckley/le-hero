@@ -17,15 +17,11 @@ namespace le_hero {
     // Handles act() calls while in stateless mode
     bool Game::act_in_stateless(enum state::StateActions action)
     {
-        spdlog::get("logger")->debug("Called Game::act_in_stateless({})", action);
+        spdlog::get("logger")->debug("Called Game::act_in_stateless({}) (value {})", get_action_string(action), action);
         switch (action) {
         case state::StateActions::START_SETUP:
             // enter initialization mode
-            this->state_handler->push(state::StateTypes::INITIALIZING);
-
-            // log state change
-            spdlog::get("logger")->debug("Changed to INITIALIZING state (value {})", (int)state::StateTypes::INITIALIZING);
-            return true;
+            return this->enter_state(state::StateTypes::INITIALIZING);
         default:
             // not a valid action in stateless mode
             return false;
@@ -35,29 +31,17 @@ namespace le_hero {
     // Handles act() calls while in initialization mode
     bool Game::act_in_initializing(enum state::StateActions action)
     {
-        spdlog::get("logger")->debug("Called Game::act_in_initialization({})", action);
+        spdlog::get("logger")->debug("Called Game::act_in_initializing({}) (value {})", get_action_string(action), action);
         switch (action) {
         case state::StateActions::FINISH_SETUP:
             // exit initialization mode
-            this->exit_current_state();
-
-            // log state change
-            spdlog::get("logger")->debug("Exited INITIALIZING state (value {})", (int)state::StateTypes::INITIALIZING);
-            return true;
+            return this->exit_current_state();
         case state::StateActions::START_PARSING_SETTINGS:
             // enter parsing mode
-            this->state_handler->push(state::StateTypes::PARSING_SETTINGS);
-
-            // log state change
-            spdlog::get("logger")->debug("Changed to PARSING_SETTINGS state (value {})", (int)state::StateTypes::PARSING_SETTINGS);
-            return true;
+            return this->enter_state(state::StateTypes::PARSING_SETTINGS);
         case state::StateActions::START_PARSING_QUESTS_INDEX:
             // enter parsing mode
-            this->state_handler->push(state::StateTypes::PARSING_QUESTS_INDEX);
-
-            // log state change
-            spdlog::get("logger")->debug("Changed to PARSING_QUESTS_INDEX state (value {})", (int)state::StateTypes::PARSING_QUESTS_INDEX);
-            return true;
+            return this->enter_state(state::StateTypes::PARSING_QUESTS_INDEX);
         default:
             // not a valid action in initialization mode
             return false;
@@ -67,27 +51,30 @@ namespace le_hero {
     // Handles act() calls while in parsing mode
     bool Game::act_in_parsing(enum state::StateActions action)
     {
-        spdlog::get("logger")->debug("Called Game::act_in_parsing({})", action);
+        spdlog::get("logger")->debug("Called Game::act_in_parsing({}) (value {})", get_action_string(action), action);
         switch (action) {
         case state::StateActions::FINISH_PARSING_SETTINGS:
             // exit parsing mode
-            this->exit_current_state();
-
-            // log state change
-            spdlog::get("logger")->debug("Exited PARSING_SETTINGS state (value {})", (int)state::StateTypes::PARSING_SETTINGS);
-            return true;
+            return this->exit_current_state();
         case state::StateActions::FINISH_PARSING_QUESTS_INDEX:
             // exit parsing mode
-            this->exit_current_state();
-
-            // log state change
-            spdlog::get("logger")->debug("Exited PARSING_QUESTS_INDEX state (value {})", (int)state::StateTypes::PARSING_QUESTS_INDEX);
-            return true;
+            return this->exit_current_state();
         default:
             // not a valid action in parsing mode
             return false;
         }
         return false;
+    }
+
+    // Enters the provided state and logs it for debugging
+    bool Game::enter_state(enum state::StateTypes new_state)
+    {
+        // enter new state
+        this->state_handler->push(new_state);
+
+        // log state change
+        spdlog::get("logger")->debug("Changed to {} state (value {})", get_state_string(new_state), new_state);
+        return true;
     }
 
     // Exits the current state and logs it for debugging
@@ -103,6 +90,7 @@ namespace le_hero {
 
         // record previous state for debugging
         this->state_history.push_back(last_state);
+        spdlog::get("logger")->debug("Exited {} state (value {})", get_state_string(last_state), last_state);
         return true;
     }
 
@@ -211,7 +199,7 @@ namespace le_hero {
     {
         // record action for debugging
         this->action_history.push_back(action);
-        spdlog::get("logger")->debug("Called Game::act({})", action);
+        spdlog::get("logger")->debug("Called Game::act({}) (value {})", get_action_string(action), action);
 
         // determine current state and perform action
         switch (this->get_current_state()) {

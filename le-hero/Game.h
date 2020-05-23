@@ -42,6 +42,7 @@ namespace le_hero {
 		bool act_in_parsing(enum state::StateActions action);
 
 	protected:
+		bool enter_state(enum state::StateTypes new_state);
 		bool exit_current_state();
 
 	public:
