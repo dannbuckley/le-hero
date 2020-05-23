@@ -28,10 +28,30 @@ namespace le_hero {
 			return true;
 		}
 
+		std::string LuaHandler::get_global_string_variable(std::string var_name)
+		{
+			// get global variable var_name
+			lua_getglobal(L, var_name.c_str());
+
+			// check for valid type
+			if (!lua_isstring(L, -1)) {
+				// throw exception for unexpected type
+				spdlog::get("logger")->error("Unexpected type for Lua global variable in call LuaHandler::get_global_string_variable({})", var_name);
+				throw unexpected_type_error();
+			}
+
+			// convert value to string
+			std::string var_value = lua_tostring(L, -1);
+
+			// pop value off lua stack
+			lua_pop(L, 1);
+			return var_value;
+		}
+
 		// Retrieves number-type value of global variable var_name from lua file
 		lua_Number LuaHandler::get_global_number_variable(std::string var_name)
 		{
-			// get global variable var_name (assumes var_name exists and is a number)
+			// get global variable var_name
 			lua_getglobal(L, var_name.c_str());
 
 			// check for valid type
@@ -416,6 +436,7 @@ namespace le_hero {
 			return true;
 		}
 
+		// Parses each Item object found in settings file
 		bool LuaHandler::parse_items(std::vector<CharacterItem>& im)
 		{
 			// get number of Items from global lua variable
@@ -468,6 +489,56 @@ namespace le_hero {
 			return true;
 		}
 
+		// Parses each Quest reference found in quests index file
+		bool LuaHandler::parse_quest_references(std::vector<std::pair<std::string, std::string>>& qr)
+		{
+			// get number of Quest references from global lua variable
+			int num_quests = 0;
+			try {
+				num_quests = (int)get_global_number_variable("num_quests");
+			}
+			catch (unexpected_type_error& e) {
+				std::cout << e.what() << std::endl;
+				return false;
+			}
+
+			// use lua GetQuestRef function to retrieve each individual Quest reference
+			for (int i = 0; i < num_quests; i++) {
+				lua_getglobal(L, "GetQuestRef");
+				if (lua_isfunction(L, -1)) {
+					// push reference index number onto lua stack
+					lua_pushnumber(L, i);
+
+					// call GetQuestRef(i)
+					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+						if (lua_istable(L, -1)) {
+							// construct Quest reference from lua table
+							std::pair<std::string, std::string> quest_ref;
+
+							try {
+								std::string quest_file = get_string_value_from_table("QuestFile");
+								std::string quest_name = get_string_value_from_table("QuestName");
+
+								quest_ref = std::make_pair(quest_file, quest_name);
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
+
+							// push Quest reference to game environment vector
+							qr.push_back(quest_ref);
+
+							// pop table off lua stack
+							lua_pop(L, 1);
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
 		// Default constructor
 		LuaHandler::LuaHandler()
 		{
@@ -475,8 +546,15 @@ namespace le_hero {
 			luaL_openlibs(L); // enable lua standard libraries
 		}
 
+		// Destructor
+		LuaHandler::~LuaHandler()
+		{
+			lua_close(L);
+		}
+
 		// Parses settings file for game environment
-		bool LuaHandler::parse_settings_file(std::string file_name, 
+		bool LuaHandler::parse_settings_file(std::string file_name,
+			std::string& quests_index_file,
 			std::vector<CharacterElement>& e, 
 			std::vector<CharacterRank>& r, 
 			std::vector<CharacterStatus>& s, 
@@ -487,6 +565,14 @@ namespace le_hero {
 		{
 			// ensure integrity of settings file
 			if (!validate_lua(luaL_dofile(L, file_name.c_str()))) {
+				return false;
+			}
+
+			try {
+				quests_index_file = get_global_string_variable("quests_index_file");
+			}
+			catch (unexpected_type_error& e) {
+				std::cout << e.what() << std::endl;
 				return false;
 			}
 
@@ -519,8 +605,34 @@ namespace le_hero {
 				return false;
 			}
 
-			// close lua state machine
-			lua_close(L);
+			return true;
+		}
+
+		bool LuaHandler::parse_quest_file(std::string quest_file)
+		{
+			// ensure integrity of quest file
+			if (!validate_lua(luaL_dofile(L, quest_file.c_str()))) {
+				return false;
+			}
+
+			// parse quest data
+			
+			return true;
+		}
+
+		// Parses quests index file for game environment
+		bool LuaHandler::parse_quests_index_file(std::string quests_index_file, std::vector<std::pair<std::string, std::string>>& qr)
+		{
+			// ensure integrity of index file
+			if (!validate_lua(luaL_dofile(L, quests_index_file.c_str()))) {
+				return false;
+			}
+
+			// parse references to quest files
+			if (!parse_quest_references(qr)) {
+				return false;
+			}
+
 			return true;
 		}
 	}

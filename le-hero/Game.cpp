@@ -10,7 +10,7 @@
 namespace le_hero {
     struct unsuccessful_lua_parse_error : public std::exception {
         const char* what() const throw() {
-            return "Encountered an error while parsing the Lua game settings file. See 'log.txt' for more info.";
+            return "Encountered an error while parsing a Lua game file. See 'log.txt' for more info.";
         }
     };
 
@@ -44,10 +44,50 @@ namespace le_hero {
             // log state change
             spdlog::get("logger")->debug("Exited INITIALIZING state (value {})", (int)state::StateTypes::INITIALIZING);
             return true;
+        case state::StateActions::START_PARSING_SETTINGS:
+            // enter parsing mode
+            this->state_handler->push(state::StateTypes::PARSING_SETTINGS);
+
+            // log state change
+            spdlog::get("logger")->debug("Changed to PARSING_SETTINGS state (value {})", (int)state::StateTypes::PARSING_SETTINGS);
+            return true;
+        case state::StateActions::START_PARSING_QUESTS_INDEX:
+            // enter parsing mode
+            this->state_handler->push(state::StateTypes::PARSING_QUESTS_INDEX);
+
+            // log state change
+            spdlog::get("logger")->debug("Changed to PARSING_QUESTS_INDEX state (value {})", (int)state::StateTypes::PARSING_QUESTS_INDEX);
+            return true;
         default:
             // not a valid action in initialization mode
             return false;
         }
+    }
+
+    // Handles act() calls while in parsing mode
+    bool Game::act_in_parsing(enum state::StateActions action)
+    {
+        spdlog::get("logger")->debug("Called Game::act_in_parsing({})", action);
+        switch (action) {
+        case state::StateActions::FINISH_PARSING_SETTINGS:
+            // exit parsing mode
+            this->exit_current_state();
+
+            // log state change
+            spdlog::get("logger")->debug("Exited PARSING_SETTINGS state (value {})", (int)state::StateTypes::PARSING_SETTINGS);
+            return true;
+        case state::StateActions::FINISH_PARSING_QUESTS_INDEX:
+            // exit parsing mode
+            this->exit_current_state();
+
+            // log state change
+            spdlog::get("logger")->debug("Exited PARSING_QUESTS_INDEX state (value {})", (int)state::StateTypes::PARSING_QUESTS_INDEX);
+            return true;
+        default:
+            // not a valid action in parsing mode
+            return false;
+        }
+        return false;
     }
 
     // Exits the current state and logs it for debugging
@@ -71,8 +111,16 @@ namespace le_hero {
         state_handler = std::make_unique<std::stack<enum state::StateTypes>>();
 
         this->act(state::StateActions::START_SETUP);
+
+        // create variable to store quests index filename
+        std::string quests_index_file;
+
+        this->act(state::StateActions::START_PARSING_SETTINGS);
+
+        // parse base settings file
         lua_handler = std::make_unique<lua::LuaHandler>();
         bool parse_result = lua_handler->parse_settings_file(settings_file,
+            quests_index_file,
             elements,
             ranks,
             statuses,
@@ -81,7 +129,21 @@ namespace le_hero {
             special_abilities,
             items);
 
-        // check if the settings file has been parsed properly
+        this->act(state::StateActions::FINISH_PARSING_SETTINGS);
+
+        // check if the base settings file has been parsed properly
+        if (!parse_result) {
+            throw unsuccessful_lua_parse_error();
+        }
+
+        this->act(state::StateActions::START_PARSING_QUESTS_INDEX);
+
+        // parse quests index file
+        parse_result = lua_handler->parse_quests_index_file(quests_index_file, quest_references);
+
+        this->act(state::StateActions::FINISH_PARSING_QUESTS_INDEX);
+
+        // check if the quests index file has been parsed properly
         if (!parse_result) {
             throw unsuccessful_lua_parse_error();
         }
@@ -157,6 +219,9 @@ namespace le_hero {
             return act_in_stateless(action);
         case state::StateTypes::INITIALIZING:
             return act_in_initializing(action);
+        case state::StateTypes::PARSING_SETTINGS:
+        case state::StateTypes::PARSING_QUESTS_INDEX:
+            return act_in_parsing(action);
         default:
             return false;
         }

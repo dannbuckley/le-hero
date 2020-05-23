@@ -26,6 +26,10 @@ namespace le_hero {
 		std::vector<CharacterSpecialAbility> special_abilities;
 		std::vector<CharacterItem> items;
 
+		/* Quest Data */
+
+		std::vector<std::pair<std::string, std::string>> quest_references;
+
 		/* Debug Variables */
 
 		std::vector<enum state::StateTypes> state_history;
@@ -35,6 +39,7 @@ namespace le_hero {
 
 		bool act_in_stateless(enum state::StateActions action);
 		bool act_in_initializing(enum state::StateActions action);
+		bool act_in_parsing(enum state::StateActions action);
 
 	protected:
 		bool exit_current_state();

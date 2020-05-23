@@ -12,11 +12,17 @@ namespace le_hero {
         enum class StateTypes : uint8_t {
             STATELESS = 0,
             INITIALIZING,
+            PARSING_SETTINGS,
+            PARSING_QUESTS_INDEX,
         };
 
         enum class StateActions : uint8_t {
             START_SETUP = 0,
             FINISH_SETUP,
+            START_PARSING_SETTINGS,
+            FINISH_PARSING_SETTINGS,
+            START_PARSING_QUESTS_INDEX,
+            FINISH_PARSING_QUESTS_INDEX,
         };
 
         class StateHandler

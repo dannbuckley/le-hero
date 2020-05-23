@@ -30,10 +30,11 @@ int main()
     // print success message
     spdlog::get("logger")->info("Logger initialized successfully.");
 
+    // show debug messages in log file
     spdlog::set_level(spdlog::level::debug);
 
+    // create the game environment using the base settings file
     std::shared_ptr<le_hero::Game> game;
-
     try {
         game = std::make_shared<le_hero::Game>("base.lua");
     }
@@ -42,6 +43,7 @@ int main()
         return EXIT_FAILURE;
     }
 
+    // create the player's character using the game environment
     std::shared_ptr<le_hero::Character> character = std::make_shared<le_hero::Character>(game);
     std::shared_ptr<le_hero::CharacterBattleHandler> character_battle = std::make_shared<le_hero::CharacterBattleHandler>(character);
 

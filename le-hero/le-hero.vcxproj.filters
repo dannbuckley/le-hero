@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Quest Scripts">
+      <UniqueIdentifier>{adafa172-9320-445b-a8bc-d00c354c3041}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="le-hero.cpp">
@@ -74,5 +77,32 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />
+    <None Include="quests\index.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_into_the_depths.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_onward_young_hero.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_out_of_the_frying_pan.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_soaring_through_the_night.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_the_first_of_many.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_the_not_so_stealthy_escape.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_through_the_swampy_marsh.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_template.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
   </ItemGroup>
 </Project>

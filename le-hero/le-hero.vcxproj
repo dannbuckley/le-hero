@@ -170,6 +170,15 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />
+    <None Include="quests\index.lua" />
+    <None Include="quests\quest_into_the_depths.lua" />
+    <None Include="quests\quest_onward_young_hero.lua" />
+    <None Include="quests\quest_out_of_the_frying_pan.lua" />
+    <None Include="quests\quest_soaring_through_the_night.lua" />
+    <None Include="quests\quest_template.lua" />
+    <None Include="quests\quest_the_first_of_many.lua" />
+    <None Include="quests\quest_the_not_so_stealthy_escape.lua" />
+    <None Include="quests\quest_through_the_swampy_marsh.lua" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

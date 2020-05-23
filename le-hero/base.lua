@@ -1,7 +1,10 @@
 --[[
-base.lua
-Copyright (c) 2020 Daniel Buckley
+	base.lua
+	Copyright (c) 2020 Daniel Buckley
 --]]
+
+-- Reference to quests index file
+quests_index_file = "quests/index.lua"
 
 -- Define character elements
 function mk_element(n, ap, at, ba, bs, bh)
