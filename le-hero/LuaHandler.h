@@ -54,7 +54,6 @@ namespace le_hero {
 
 		public:
 			LuaHandler();
-			~LuaHandler();
 
 			// Parser for base.lua
 			bool parse_settings_file(std::string file_name,

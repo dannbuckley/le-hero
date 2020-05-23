@@ -62,7 +62,7 @@ namespace le_hero {
 			}
 
 			// convert value to number
-			int var_value = lua_tonumber(L, -1);
+			lua_Number var_value = lua_tonumber(L, -1);
 
 			// pop value off lua stack
 			lua_pop(L, 1);
@@ -540,16 +540,8 @@ namespace le_hero {
 		}
 
 		// Default constructor
-		LuaHandler::LuaHandler()
+		LuaHandler::LuaHandler(): L(nullptr)
 		{
-			L = luaL_newstate(); // initialize lua stack
-			luaL_openlibs(L); // enable lua standard libraries
-		}
-
-		// Destructor
-		LuaHandler::~LuaHandler()
-		{
-			lua_close(L);
 		}
 
 		// Parses settings file for game environment
@@ -563,6 +555,9 @@ namespace le_hero {
 			std::vector<CharacterSpecialAbility>& s_abil,
 			std::vector<CharacterItem>& im)
 		{
+			L = luaL_newstate(); // initialize lua stack
+			luaL_openlibs(L); // enable lua standard libraries
+
 			// ensure integrity of settings file
 			if (!validate_lua(luaL_dofile(L, file_name.c_str()))) {
 				return false;
@@ -605,11 +600,16 @@ namespace le_hero {
 				return false;
 			}
 
+			// close lua state
+			lua_close(L);
 			return true;
 		}
 
 		bool LuaHandler::parse_quest_file(std::string quest_file)
 		{
+			L = luaL_newstate(); // initialize lua stack
+			luaL_openlibs(L); // enable lua standard libraries
+
 			// ensure integrity of quest file
 			if (!validate_lua(luaL_dofile(L, quest_file.c_str()))) {
 				return false;
@@ -617,12 +617,17 @@ namespace le_hero {
 
 			// parse quest data
 			
+			// close lua state
+			lua_close(L);
 			return true;
 		}
 
 		// Parses quests index file for game environment
 		bool LuaHandler::parse_quests_index_file(std::string quests_index_file, std::vector<std::pair<std::string, std::string>>& qr)
 		{
+			L = luaL_newstate(); // initialize lua stack
+			luaL_openlibs(L); // enable lua standard libraries
+
 			// ensure integrity of index file
 			if (!validate_lua(luaL_dofile(L, quests_index_file.c_str()))) {
 				return false;
@@ -633,6 +638,8 @@ namespace le_hero {
 				return false;
 			}
 
+			// close lua state
+			lua_close(L);
 			return true;
 		}
 	}

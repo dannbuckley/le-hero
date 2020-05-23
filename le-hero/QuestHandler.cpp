@@ -24,7 +24,7 @@ namespace le_hero {
                 this->current_enemy_info = QuestEnemyInfo{ this->num_enemies_defeated, this->base->enemy_info[this->num_enemies_defeated] };
 
                 // TODO: test this method of constructing next enemy Battle Handler
-                std::shared_ptr<Character> enemy_base = std::make_shared<Character>(this->current_enemy_info.enemy_meta);
+                std::shared_ptr<Character> enemy_base = std::make_shared<Character>(this->env, this->current_enemy_info.enemy_meta);
                 this->current_enemy = std::make_shared<CharacterBattleHandler>(enemy_base);
                 this->current_enemy->register_battle(this->base->quest_terrain);
             }
@@ -46,8 +46,12 @@ namespace le_hero {
             this->end_quest(true);
         }
 
-        QuestHandler::QuestHandler(std::shared_ptr<Quest> base, 
-            std::shared_ptr<CharacterBattleHandler> player): base(base), player(player)
+        QuestHandler::QuestHandler(std::shared_ptr<Game> env,
+            std::shared_ptr<Quest> base,
+            std::shared_ptr<CharacterBattleHandler> player):
+            env(env), 
+            base(base), 
+            player(player)
         {
         }
 
