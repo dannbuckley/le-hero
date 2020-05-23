@@ -4,11 +4,19 @@
  */
 
 #include <bitset>
+#include <exception>
 #include <iostream>
 #include "LuaHandler.h"
+#include "spdlog/spdlog.h"
 
 namespace le_hero {
 	namespace lua {
+		struct unexpected_type_error : public std::exception {
+			const char* what() const throw() {
+				return "Unexpected type encountered when parsing Lua file. See 'log.txt' for more info.";
+			}
+		};
+
 		// Validates a given lua response value
 		bool LuaHandler::validate_lua(int r)
 		{
@@ -25,9 +33,16 @@ namespace le_hero {
 		{
 			// get global variable var_name (assumes var_name exists and is a number)
 			lua_getglobal(L, var_name.c_str());
-			int var_value = lua_tonumber(L, -1);
 
-			// TODO: throw exception for unexpected type
+			// check for valid type
+			if (!lua_isnumber(L, -1)) {
+				// throw exception for unexpected type
+				spdlog::get("logger")->error("Unexpected type for Lua global variable in call LuaHandler::get_global_number_variable({})", var_name);
+				throw unexpected_type_error();
+			}
+
+			// convert value to number
+			int var_value = lua_tonumber(L, -1);
 
 			// pop value off lua stack
 			lua_pop(L, 1);
@@ -41,7 +56,12 @@ namespace le_hero {
 			lua_pushstring(L, key.c_str());
 			lua_gettable(L, -2);
 
-			// TODO: throw exception for unexpected type
+			// check for valid type
+			if (!lua_isstring(L, -1)) {
+				// throw exception for unexpected type
+				spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHandler::get_string_value_from_table({})", key);
+				throw unexpected_type_error();
+			}
 
 			// convert value to string
 			std::string value = lua_tostring(L, -1);
@@ -58,7 +78,12 @@ namespace le_hero {
 			lua_pushstring(L, key.c_str());
 			lua_gettable(L, -2);
 
-			// TODO: throw exception for unexpected type
+			// check for valid type
+			if (!lua_isnumber(L, -1)) {
+				// throw exception for unexpected type
+				spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHandler::get_number_value_from_table({})", key);
+				throw unexpected_type_error();
+			}
 
 			// convert value to number
 			lua_Number value = lua_tonumber(L, -1);
@@ -75,7 +100,12 @@ namespace le_hero {
 			lua_pushstring(L, key.c_str());
 			lua_gettable(L, -2);
 
-			// TODO: throw exception for unexpected type
+			// check for valid type
+			if (!lua_isboolean(L, -1)) {
+				// throw exception for unexpected type
+				spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHandler::get_bool_value_from_table({})", key);
+				throw unexpected_type_error();
+			}
 
 			// convert value to boolean
 			bool value = lua_toboolean(L, -1);
@@ -100,13 +130,20 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Element object from lua table
 							CharacterElement element;
-							element.name = get_string_value_from_table("Name");
-							element.armor_percent = (uint8_t)get_number_value_from_table("ArmorPercent");
-							element.armor_turns = (uint8_t)get_number_value_from_table("ArmorTurns");
-							element.base_attack = (uint8_t)get_number_value_from_table("BaseAttack");
-							element.base_speed = (uint8_t)get_number_value_from_table("BaseSpeed");
-							element.base_health = (uint8_t)get_number_value_from_table("BaseHealth");
-							element.element_identifier = (CharacterElements)i;
+
+							try {
+								element.name = get_string_value_from_table("Name");
+								element.armor_percent = (uint8_t)get_number_value_from_table("ArmorPercent");
+								element.armor_turns = (uint8_t)get_number_value_from_table("ArmorTurns");
+								element.base_attack = (uint8_t)get_number_value_from_table("BaseAttack");
+								element.base_speed = (uint8_t)get_number_value_from_table("BaseSpeed");
+								element.base_health = (uint8_t)get_number_value_from_table("BaseHealth");
+								element.element_identifier = (CharacterElements)i;
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
 
 							// push Element object to game environment vector
 							e.push_back(element);
@@ -136,10 +173,17 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Rank object from lua table
 							CharacterRank rank;
-							rank.name = get_string_value_from_table("Name");
-							rank.attack_boost = (uint8_t)get_number_value_from_table("AttackBoost");
-							rank.speed_boost = (uint8_t)get_number_value_from_table("SpeedBoost");
-							rank.health_boost = (uint8_t)get_number_value_from_table("HealthBoost");
+
+							try {
+								rank.name = get_string_value_from_table("Name");
+								rank.attack_boost = (uint8_t)get_number_value_from_table("AttackBoost");
+								rank.speed_boost = (uint8_t)get_number_value_from_table("SpeedBoost");
+								rank.health_boost = (uint8_t)get_number_value_from_table("HealthBoost");
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
 
 							// push Rank object to game environment vector
 							r.push_back(rank);
@@ -158,7 +202,14 @@ namespace le_hero {
 		bool LuaHandler::parse_statuses(std::vector<CharacterStatus>& s)
 		{
 			// get number of Statuses from global lua variable
-			int num_statuses = (int)get_global_number_variable("num_statuses");
+			int num_statuses = 0;
+			try {
+				num_statuses = (int)get_global_number_variable("num_statuses");
+			}
+			catch (unexpected_type_error& e) {
+				std::cout << e.what() << std::endl;
+				return false;
+			}
 
 			// use lua GetStatus function to retrieve each individual Status object
 			for (int i = 0; i < num_statuses; i++) {
@@ -172,10 +223,17 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Status object from lua table
 							CharacterStatus status;
-							status.name = get_string_value_from_table("Name");
-							status.effect = get_string_value_from_table("Effect");
-							status.effect_length = (uint8_t)get_number_value_from_table("EffectLength");
-							status.status_type = (CharacterStatusTypes)get_number_value_from_table("StatusType");
+
+							try {
+								status.name = get_string_value_from_table("Name");
+								status.effect = get_string_value_from_table("Effect");
+								status.effect_length = (uint8_t)get_number_value_from_table("EffectLength");
+								status.status_type = (CharacterStatusTypes)get_number_value_from_table("StatusType");
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
 
 							// push Status object to game environment vector
 							s.push_back(status);
@@ -194,7 +252,14 @@ namespace le_hero {
 		bool LuaHandler::parse_weapons(std::vector<CharacterWeapon>& w)
 		{
 			// get number of Weapons from global lua variable
-			int num_weapons = (int)get_global_number_variable("num_weapons");
+			int num_weapons = 0;
+			try {
+				num_weapons = (int)get_global_number_variable("num_weapons");
+			}
+			catch (unexpected_type_error& e) {
+				std::cout << e.what() << std::endl;
+				return false;
+			}
 
 			// use lua GetWeapon function to retrieve each individual Weapon object
 			for (int i = 0; i < num_weapons; i++) {
@@ -208,22 +273,29 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Weapon object from lua table
 							CharacterWeapon weapon;
-							weapon.collection_index = (uint8_t)get_number_value_from_table("CollectionIndex");
-							weapon.category = (WeaponCategory)get_number_value_from_table("Category");
-							weapon.handling = (WeaponHandling)get_number_value_from_table("Handling");
-							weapon.weight = (WeaponWeight)get_number_value_from_table("Weight");
-							weapon.range = (WeaponRange)get_number_value_from_table("Range");
-							weapon.damage_type = (WeaponDamageType)get_number_value_from_table("DamageType");
-							weapon.name = get_string_value_from_table("Name");
-							weapon.element = (CharacterElements)get_number_value_from_table("Element");
-							weapon.strength = (uint8_t)get_number_value_from_table("Strength");
-							weapon.can_inflict_status = get_bool_value_from_table("CanInflictStatus");
 
-							if (weapon.can_inflict_status) {
-								weapon.inflicted_status = (uint8_t)get_number_value_from_table("InflictedStatus");
+							try {
+								weapon.collection_index = (uint8_t)get_number_value_from_table("CollectionIndex");
+								weapon.category = (WeaponCategory)get_number_value_from_table("Category");
+								weapon.handling = (WeaponHandling)get_number_value_from_table("Handling");
+								weapon.weight = (WeaponWeight)get_number_value_from_table("Weight");
+								weapon.range = (WeaponRange)get_number_value_from_table("Range");
+								weapon.damage_type = (WeaponDamageType)get_number_value_from_table("DamageType");
+								weapon.name = get_string_value_from_table("Name");
+								weapon.element = (CharacterElements)get_number_value_from_table("Element");
+								weapon.strength = (uint8_t)get_number_value_from_table("Strength");
+								weapon.can_inflict_status = get_bool_value_from_table("CanInflictStatus");
+
+								if (weapon.can_inflict_status) {
+									weapon.inflicted_status = (uint8_t)get_number_value_from_table("InflictedStatus");
+								}
+								else {
+									weapon.inflicted_status = 0;
+								}
 							}
-							else {
-								weapon.inflicted_status = 0;
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
 							}
 
 							// push Weapon object to game environment vector
@@ -254,9 +326,16 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Passive Ability object from lua table
 							CharacterPassiveAbility passive_ability;
-							passive_ability.name = get_string_value_from_table("Name");
-							passive_ability.effect = get_string_value_from_table("Effect");
-							passive_ability.native_element = (CharacterElements)i;
+
+							try {
+								passive_ability.name = get_string_value_from_table("Name");
+								passive_ability.effect = get_string_value_from_table("Effect");
+								passive_ability.native_element = (CharacterElements)i;
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
 
 							// push Passive Ability object to game environment vector
 							p_abil.push_back(passive_ability);
@@ -275,7 +354,14 @@ namespace le_hero {
 		bool LuaHandler::parse_special_abilities(std::vector<CharacterSpecialAbility>& s_abil)
 		{
 			// get number of Special Abilities from global lua variable
-			int num_special_abilities = (int)get_global_number_variable("num_special_abilities");
+			int num_special_abilities = 0;
+			try {
+				num_special_abilities = (int)get_global_number_variable("num_special_abilities");
+			}
+			catch (unexpected_type_error& e) {
+				std::cout << e.what() << std::endl;
+				return false;
+			}
 
 			// use lua GetSpecialAbility function to retrieve each individual Special Ability object
 			for (int i = 0; i < num_special_abilities; i++) {
@@ -289,26 +375,33 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Special Ability object from lua table
 							CharacterSpecialAbility special_ability;
-							special_ability.name = get_string_value_from_table("Name");
-							special_ability.effect = get_string_value_from_table("Effect");
-							special_ability.cost_to_learn = (uint16_t)get_number_value_from_table("CostToLearn");
 
-							// construct Special Ability Requirements from WeaponReqs and ElementSupport properties
-							CharacterSpecialAbilityRequirements reqs;
-							std::bitset<2> weapon_reqs = (uint8_t)get_number_value_from_table("WeaponReqs");
-							std::bitset<6> element_support = (uint8_t)get_number_value_from_table("ElementSupport");
+							try {
+								special_ability.name = get_string_value_from_table("Name");
+								special_ability.effect = get_string_value_from_table("Effect");
+								special_ability.cost_to_learn = (uint16_t)get_number_value_from_table("CostToLearn");
 
-							reqs.melee_range_weapon_needed = weapon_reqs[1];
-							reqs.long_range_weapon_needed = weapon_reqs[0];
+								// construct Special Ability Requirements from WeaponReqs and ElementSupport properties
+								CharacterSpecialAbilityRequirements reqs;
+								std::bitset<2> weapon_reqs = (uint8_t)get_number_value_from_table("WeaponReqs");
+								std::bitset<6> element_support = (uint8_t)get_number_value_from_table("ElementSupport");
 
-							reqs.basic_element_supported = element_support[5];
-							reqs.earth_element_supported = element_support[4];
-							reqs.air_element_supported = element_support[3];
-							reqs.fire_element_supported = element_support[2];
-							reqs.water_element_supported = element_support[1];
-							reqs.mystic_element_supported = element_support[0];
+								reqs.melee_range_weapon_needed = weapon_reqs[1];
+								reqs.long_range_weapon_needed = weapon_reqs[0];
 
-							special_ability.requirements = reqs;
+								reqs.basic_element_supported = element_support[5];
+								reqs.earth_element_supported = element_support[4];
+								reqs.air_element_supported = element_support[3];
+								reqs.fire_element_supported = element_support[2];
+								reqs.water_element_supported = element_support[1];
+								reqs.mystic_element_supported = element_support[0];
+
+								special_ability.requirements = reqs;
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
 
 							// push Special Ability object to game environment vector
 							s_abil.push_back(special_ability);
@@ -326,7 +419,14 @@ namespace le_hero {
 		bool LuaHandler::parse_items(std::vector<CharacterItem>& im)
 		{
 			// get number of Items from global lua variable
-			int num_items = (int)get_global_number_variable("num_items");
+			int num_items = 0;
+			try {
+				num_items = (int)get_global_number_variable("num_items");
+			}
+			catch (unexpected_type_error& e) {
+				std::cout << e.what() << std::endl;
+				return false;
+			}
 
 			// use lua GetSpecialAbility function to retrieve each individual Item object
 			for (int i = 0; i < num_items; i++) {
@@ -340,13 +440,20 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Item object from lua table
 							CharacterItem item;
-							item.name = get_string_value_from_table("Name");
-							item.effect = get_string_value_from_table("Effect");
-							item.item_type = (CharacterItemType)get_number_value_from_table("ItemType");
-							item.item_rank = (CharacterItemRank)get_number_value_from_table("ItemRank");
-							item.item_element = (CharacterElements)get_number_value_from_table("ItemElement");
-							item.cost = (uint32_t)get_number_value_from_table("Cost");
-							item.available_at_level = (uint8_t)get_number_value_from_table("AvailableAtLevel");
+
+							try {
+								item.name = get_string_value_from_table("Name");
+								item.effect = get_string_value_from_table("Effect");
+								item.item_type = (CharacterItemType)get_number_value_from_table("ItemType");
+								item.item_rank = (CharacterItemRank)get_number_value_from_table("ItemRank");
+								item.item_element = (CharacterElements)get_number_value_from_table("ItemElement");
+								item.cost = (uint32_t)get_number_value_from_table("Cost");
+								item.available_at_level = (uint8_t)get_number_value_from_table("AvailableAtLevel");
+							}
+							catch (unexpected_type_error& e) {
+								std::cout << e.what() << std::endl;
+								return false;
+							}
 
 							// push Special Ability object to game environment vector
 							im.push_back(item);
@@ -357,7 +464,8 @@ namespace le_hero {
 					}
 				}
 			}
-			return false;
+
+			return true;
 		}
 
 		// Default constructor
@@ -383,13 +491,33 @@ namespace le_hero {
 			}
 
 			// parse game data from settings file
-			parse_elements(e);
-			parse_ranks(r);
-			parse_statuses(s);
-			parse_weapons(w);
-			parse_passive_abilities(p_abil);
-			parse_special_abilities(s_abil);
-			parse_items(im);
+			if (!parse_elements(e)) {
+				return false;
+			}
+
+			if (!parse_ranks(r)) {
+				return false;
+			}
+
+			if (!parse_statuses(s)) {
+				return false;
+			}
+
+			if (!parse_weapons(w)) {
+				return false;
+			}
+
+			if (!parse_passive_abilities(p_abil)) {
+				return false;
+			}
+
+			if (!parse_special_abilities(s_abil)) {
+				return false;
+			}
+
+			if (!parse_items(im)) {
+				return false;
+			}
 
 			// close lua state machine
 			lua_close(L);

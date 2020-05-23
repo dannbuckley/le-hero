@@ -55,7 +55,7 @@ statuses[13] = mk_status("Killing Spree", "Raises the characters attack and spee
 
 -- Define weapons
 function mk_weapon(ci, c, h, w, r, dt, n, e, str, cis, is)
-	return {CollectionIndex=ci, Category=c, Handling=h, Weight=w, Range=r, DamageType=dt, Name=n, Element=e, CanInflictStatus=cis, InflictedStatus=is}
+	return {CollectionIndex=ci, Category=c, Handling=h, Weight=w, Range=r, DamageType=dt, Name=n, Element=e, Strength=str, CanInflictStatus=cis, InflictedStatus=is}
 end
 
 num_weapons = 56

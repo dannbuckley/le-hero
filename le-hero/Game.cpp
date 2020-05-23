@@ -3,16 +3,28 @@
  * Copyright (c) 2020 Daniel Buckley
  */
 
+#include <exception>
 #include "Game.h"
+#include "spdlog/spdlog.h"
 
 namespace le_hero {
+    struct unsuccessful_lua_parse_error : public std::exception {
+        const char* what() const throw() {
+            return "Encountered an error while parsing the Lua game settings file. See 'log.txt' for more info.";
+        }
+    };
+
     // Handles act() calls while in stateless mode
     bool Game::act_in_stateless(enum state::StateActions action)
     {
+        spdlog::get("logger")->debug("Called Game::act_in_stateless({})", action);
         switch (action) {
         case state::StateActions::START_SETUP:
             // enter initialization mode
             this->state_handler->push(state::StateTypes::INITIALIZING);
+
+            // log state change
+            spdlog::get("logger")->debug("Changed to INITIALIZING state (value {})", (int)state::StateTypes::INITIALIZING);
             return true;
         default:
             // not a valid action in stateless mode
@@ -23,10 +35,14 @@ namespace le_hero {
     // Handles act() calls while in initialization mode
     bool Game::act_in_initializing(enum state::StateActions action)
     {
+        spdlog::get("logger")->debug("Called Game::act_in_initialization({})", action);
         switch (action) {
         case state::StateActions::FINISH_SETUP:
             // exit initialization mode
             this->exit_current_state();
+
+            // log state change
+            spdlog::get("logger")->debug("Exited INITIALIZING state (value {})", (int)state::StateTypes::INITIALIZING);
             return true;
         default:
             // not a valid action in initialization mode
@@ -56,7 +72,7 @@ namespace le_hero {
 
         this->act(state::StateActions::START_SETUP);
         lua_handler = std::make_unique<lua::LuaHandler>();
-        lua_handler->parse_settings_file(settings_file,
+        bool parse_result = lua_handler->parse_settings_file(settings_file,
             elements,
             ranks,
             statuses,
@@ -64,6 +80,12 @@ namespace le_hero {
             passive_abilities,
             special_abilities,
             items);
+
+        // check if the settings file has been parsed properly
+        if (!parse_result) {
+            throw unsuccessful_lua_parse_error();
+        }
+
         this->act(state::StateActions::FINISH_SETUP);
     }
 
@@ -127,6 +149,7 @@ namespace le_hero {
     {
         // record action for debugging
         this->action_history.push_back(action);
+        spdlog::get("logger")->debug("Called Game::act({})", action);
 
         // determine current state and perform action
         switch (this->get_current_state()) {
