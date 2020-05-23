@@ -73,11 +73,30 @@ namespace le_hero {
 	Character::Character(std::shared_ptr<Game> game_env): env(game_env)
 	{
 		// initialize Weapons Vault, Inventory, and Special Ability Library
-		this->vault = std::vector<uint8_t>(env->get_num_weapons());
+		this->vault = std::vector<bool>(env->get_num_weapons());
 		this->inventory = std::vector<uint8_t>(env->get_num_items());
 		this->library = std::vector<bool>(env->get_num_special_abilities());
 
 		// initialize level to 1
+		this->update_level();
+	}
+
+	Character::Character(std::shared_ptr<Game> game_env, CharacterMeta meta) : env(game_env)
+	{
+		// transfer meta to Character data
+		this->element = this->env->get_element((uint8_t)meta.element);
+		this->passive_ability = this->env->get_passive_ability((uint8_t)meta.element);
+		this->rank = this->env->get_rank((uint8_t)meta.rank);
+		this->total_experience = meta.total_experience;
+		this->available_experience = meta.available_experience;
+		this->weapon = this->env->get_weapon(meta.weapon_index);
+		this->acquired_ability = this->env->get_special_ability(meta.special_ability_index);
+		this->coins = meta.coins;
+		this->vault = meta.vault;
+		this->inventory = meta.inventory;
+		this->library = meta.library;
+
+		// update level
 		this->update_level();
 	}
 
@@ -294,5 +313,62 @@ namespace le_hero {
 			return true;
 		}
 		return false;
+	}
+
+	bool Character::has_weapon(CharacterWeapon _weapon)
+	{
+		return this->vault[((int)_weapon.element * 8) + _weapon.collection_index];
+	}
+
+	bool Character::has_weapon(uint8_t weapon_index)
+	{
+		return this->vault[weapon_index];
+	}
+
+	// Adds the given weapon to the Character's Weapons Vault
+	bool Character::acquire_weapon(CharacterWeapon _weapon)
+	{
+		if (this->has_weapon(_weapon)) {
+			// Character cannot have more than one of the same weapon
+			return false;
+		}
+
+		// set weapon as 'obtained' in the weapons vault
+		this->vault[((int)_weapon.element * 8) + _weapon.collection_index] = true;
+
+		return true;
+	}
+
+	// Adds the given weapon located at weapon_index to the Character's Weapons Vault
+	bool Character::acquire_weapon(uint8_t weapon_index)
+	{
+		if (this->has_weapon(weapon_index)) {
+			// Character cannot have more than one of the same weapon
+			return false;
+		}
+
+		// set weapon as 'obtained' in the weapons vault
+		this->vault[weapon_index] = true;
+
+		return true;
+	}
+
+	// Changes the Character's currently equipped weapon to the weapon located at weapon_index
+	bool Character::change_weapon(uint8_t weapon_index)
+	{
+		uint8_t current_weapon_index = ((int)this->weapon.element * 8) + this->weapon.collection_index;
+		if (current_weapon_index == weapon_index) {
+			// no need to change to already equipped weapon
+			return false;
+		}
+		else if (!this->has_weapon(weapon_index)) {
+			// Character cannot use a weapon they do not have
+			return false;
+		}
+
+		// change the equipped weapon to the weapon associated with weapon_index
+		this->weapon = this->env->get_weapon(weapon_index);
+
+		return true;
 	}
 }

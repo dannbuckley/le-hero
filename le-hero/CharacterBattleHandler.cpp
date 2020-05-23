@@ -8,20 +8,26 @@
 #include "CharacterBattleHandler.h"
 
 namespace le_hero {
-    uint16_t le_hero::CharacterBattleHandler::_calculate_battle_attack_stat()
-    {
-        return (uint16_t)floorf(this->attack_modifier * this->base->calculate_attack_stat());
-    }
+	CharacterBattleHandler::CharacterBattleHandler()
+	{
+        this->reset_turn_data();
+        this->reset_stats(true);
+	}
 
-    uint16_t CharacterBattleHandler::_calculate_battle_speed_stat()
-    {
-        return (uint16_t)floorf(this->speed_modifier * this->base->calculate_speed_stat());
-    }
-
-    CharacterBattleHandler::CharacterBattleHandler(std::shared_ptr<Character> base) : base(base)
+	CharacterBattleHandler::CharacterBattleHandler(std::shared_ptr<Character> base) : base(base)
     {
         this->reset_turn_data();
         this->reset_stats(true);
+    }
+
+	bool CharacterBattleHandler::is_ready()
+	{
+		return this->ready;
+	}
+
+    bool CharacterBattleHandler::is_in_battle()
+    {
+        return this->currently_in_battle;
     }
 
     bool CharacterBattleHandler::cure_status()
@@ -60,6 +66,16 @@ namespace le_hero {
         // completely restore the Character's armor
         this->armor_turns_left = this->base->get_element().armor_turns;
         return true;
+    }
+
+    uint16_t le_hero::CharacterBattleHandler::calculate_battle_attack_stat()
+    {
+        return (uint16_t)floorf(this->attack_modifier * this->base->calculate_attack_stat());
+    }
+
+    uint16_t CharacterBattleHandler::calculate_battle_speed_stat()
+    {
+        return (uint16_t)floorf(this->speed_modifier * this->base->calculate_speed_stat());
     }
 
     uint16_t CharacterBattleHandler::get_current_health()
@@ -191,6 +207,23 @@ namespace le_hero {
         // TODO: call item effect function
         return false;
     }
+
+	void CharacterBattleHandler::obtain_quest_prizes(uint32_t prize_coins,
+        uint16_t prize_experience,
+        std::vector<uint8_t> prize_items,
+        std::vector<uint8_t> prize_weapons)
+	{
+        this->base->gain_coins(prize_coins);
+        this->base->gain_exp(prize_experience);
+        
+        for (auto prize_item : prize_items) {
+            this->base->acquire_item(prize_item);
+        }
+
+        for (auto prize_weapon : prize_weapons) {
+            this->base->acquire_weapon(prize_weapon);
+        }
+	}
 
     void CharacterBattleHandler::select_action(enum CharacterActionTypes action)
     {

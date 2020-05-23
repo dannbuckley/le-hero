@@ -42,15 +42,19 @@ namespace le_hero {
 
         uint16_t damage_dealt = 0;
 
-        uint16_t _calculate_battle_attack_stat();
-        uint16_t _calculate_battle_speed_stat();
-
     public:
+        CharacterBattleHandler();
         CharacterBattleHandler(std::shared_ptr<Character> base);
+
+        bool is_ready();
+        bool is_in_battle();
 
         bool cure_status();
         bool inflict_status(CharacterStatus new_status);
         bool restore_armor();
+
+        uint16_t calculate_battle_attack_stat();
+        uint16_t calculate_battle_speed_stat();
 
         uint16_t get_current_health();
         uint16_t damage_health(uint16_t amount, bool bypass_armor = false);
@@ -65,6 +69,11 @@ namespace le_hero {
         void select_action(enum CharacterActionTypes action);
 
         bool use_item(uint8_t item_index);
+
+        void obtain_quest_prizes(uint32_t prize_coins,
+            uint16_t prize_experience,
+            std::vector<uint8_t> prize_items,
+            std::vector<uint8_t> prize_weapons);
     };
 }
 
