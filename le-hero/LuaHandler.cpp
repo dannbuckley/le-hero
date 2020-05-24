@@ -4,137 +4,12 @@
  */
 
 #include <bitset>
-#include <exception>
 #include <iostream>
+#include "LuaDefaults.h"
 #include "LuaHandler.h"
-#include "spdlog/spdlog.h"
 
 namespace le_hero {
 	namespace lua {
-		struct unexpected_type_error : public std::exception {
-			const char* what() const throw() {
-				return "Unexpected type encountered when parsing Lua file. See 'log.txt' for more info.";
-			}
-		};
-
-		// Validates a given lua response value
-		bool LuaHandler::validate_lua(int r)
-		{
-			if (r != LUA_OK) {
-				std::string err = lua_tostring(L, -1);
-				std::cout << err << std::endl;
-				return false;
-			}
-			return true;
-		}
-
-		std::string LuaHandler::get_global_string_variable(std::string var_name)
-		{
-			// get global variable var_name
-			lua_getglobal(L, var_name.c_str());
-
-			// check for valid type
-			if (!lua_isstring(L, -1)) {
-				// throw exception for unexpected type
-				spdlog::get("logger")->error("Unexpected type for Lua global variable in call LuaHandler::get_global_string_variable({})", var_name);
-				throw unexpected_type_error();
-			}
-
-			// convert value to string
-			std::string var_value = lua_tostring(L, -1);
-
-			// pop value off lua stack
-			lua_pop(L, 1);
-			return var_value;
-		}
-
-		// Retrieves number-type value of global variable var_name from lua file
-		lua_Number LuaHandler::get_global_number_variable(std::string var_name)
-		{
-			// get global variable var_name
-			lua_getglobal(L, var_name.c_str());
-
-			// check for valid type
-			if (!lua_isnumber(L, -1)) {
-				// throw exception for unexpected type
-				spdlog::get("logger")->error("Unexpected type for Lua global variable in call LuaHandler::get_global_number_variable({})", var_name);
-				throw unexpected_type_error();
-			}
-
-			// convert value to number
-			lua_Number var_value = lua_tonumber(L, -1);
-
-			// pop value off lua stack
-			lua_pop(L, 1);
-			return var_value;
-		}
-
-		// Retrieves string-type value with associated key from lua table
-		std::string LuaHandler::get_string_value_from_table(std::string key)
-		{
-			// push key onto stack and retrieve value from table
-			lua_pushstring(L, key.c_str());
-			lua_gettable(L, -2);
-
-			// check for valid type
-			if (!lua_isstring(L, -1)) {
-				// throw exception for unexpected type
-				spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHandler::get_string_value_from_table({})", key);
-				throw unexpected_type_error();
-			}
-
-			// convert value to string
-			std::string value = lua_tostring(L, -1);
-
-			// pop value off lua stack
-			lua_pop(L, 1);
-			return value;
-		}
-
-		// Retrieves number-type value with associated key from lua table
-		lua_Number LuaHandler::get_number_value_from_table(std::string key)
-		{
-			// push key onto stack and retrieve value from table
-			lua_pushstring(L, key.c_str());
-			lua_gettable(L, -2);
-
-			// check for valid type
-			if (!lua_isnumber(L, -1)) {
-				// throw exception for unexpected type
-				spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHandler::get_number_value_from_table({})", key);
-				throw unexpected_type_error();
-			}
-
-			// convert value to number
-			lua_Number value = lua_tonumber(L, -1);
-
-			// pop value off lua stack
-			lua_pop(L, 1);
-			return value;
-		}
-
-		// Retrieves bool-type value with associated key from lua table
-		bool LuaHandler::get_bool_value_from_table(std::string key)
-		{
-			// push key onto stack and retrieve value from table
-			lua_pushstring(L, key.c_str());
-			lua_gettable(L, -2);
-
-			// check for valid type
-			if (!lua_isboolean(L, -1)) {
-				// throw exception for unexpected type
-				spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHandler::get_bool_value_from_table({})", key);
-				throw unexpected_type_error();
-			}
-
-			// convert value to boolean
-			bool value = lua_toboolean(L, -1);
-
-			// pop value off lua stack
-			lua_pop(L, 1);
-			return value;
-		}
-
 		// Parses each Element object found in settings file
 		bool LuaHandler::parse_elements(std::vector<CharacterElement>& e)
 		{
@@ -146,18 +21,18 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetElement(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Element object from lua table
 							CharacterElement element;
 
 							try {
-								element.name = get_string_value_from_table("Name");
-								element.armor_percent = (uint8_t)get_number_value_from_table("ArmorPercent");
-								element.armor_turns = (uint8_t)get_number_value_from_table("ArmorTurns");
-								element.base_attack = (uint8_t)get_number_value_from_table("BaseAttack");
-								element.base_speed = (uint8_t)get_number_value_from_table("BaseSpeed");
-								element.base_health = (uint8_t)get_number_value_from_table("BaseHealth");
+								element.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								element.armor_percent = (uint8_t)LuaHelpers::get_number_value_from_table(L, "ArmorPercent");
+								element.armor_turns = (uint8_t)LuaHelpers::get_number_value_from_table(L, "ArmorTurns");
+								element.base_attack = (uint8_t)LuaHelpers::get_number_value_from_table(L, "BaseAttack");
+								element.base_speed = (uint8_t)LuaHelpers::get_number_value_from_table(L, "BaseSpeed");
+								element.base_health = (uint8_t)LuaHelpers::get_number_value_from_table(L, "BaseHealth");
 								element.element_identifier = (CharacterElements)i;
 							}
 							catch (unexpected_type_error& e) {
@@ -189,16 +64,16 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetRank(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Rank object from lua table
 							CharacterRank rank;
 
 							try {
-								rank.name = get_string_value_from_table("Name");
-								rank.attack_boost = (uint8_t)get_number_value_from_table("AttackBoost");
-								rank.speed_boost = (uint8_t)get_number_value_from_table("SpeedBoost");
-								rank.health_boost = (uint8_t)get_number_value_from_table("HealthBoost");
+								rank.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								rank.attack_boost = (uint8_t)LuaHelpers::get_number_value_from_table(L, "AttackBoost");
+								rank.speed_boost = (uint8_t)LuaHelpers::get_number_value_from_table(L, "SpeedBoost");
+								rank.health_boost = (uint8_t)LuaHelpers::get_number_value_from_table(L, "HealthBoost");
 							}
 							catch (unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
@@ -224,7 +99,7 @@ namespace le_hero {
 			// get number of Statuses from global lua variable
 			int num_statuses = 0;
 			try {
-				num_statuses = (int)get_global_number_variable("num_statuses");
+				num_statuses = (int)LuaHelpers::get_global_number_variable(L, "num_statuses");
 			}
 			catch (unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -239,16 +114,16 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetStatus(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Status object from lua table
 							CharacterStatus status;
 
 							try {
-								status.name = get_string_value_from_table("Name");
-								status.effect = get_string_value_from_table("Effect");
-								status.effect_length = (uint8_t)get_number_value_from_table("EffectLength");
-								status.status_type = (CharacterStatusTypes)get_number_value_from_table("StatusType");
+								status.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								status.effect = LuaHelpers::get_string_value_from_table(L, "Effect");
+								status.effect_length = (uint8_t)LuaHelpers::get_number_value_from_table(L, "EffectLength");
+								status.status_type = (CharacterStatusTypes)LuaHelpers::get_number_value_from_table(L, "StatusType");
 							}
 							catch (unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
@@ -274,7 +149,7 @@ namespace le_hero {
 			// get number of Weapons from global lua variable
 			int num_weapons = 0;
 			try {
-				num_weapons = (int)get_global_number_variable("num_weapons");
+				num_weapons = (int)LuaHelpers::get_global_number_variable(L, "num_weapons");
 			}
 			catch (unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -289,25 +164,25 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetWeapon(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Weapon object from lua table
 							CharacterWeapon weapon;
 
 							try {
-								weapon.collection_index = (uint8_t)get_number_value_from_table("CollectionIndex");
-								weapon.category = (WeaponCategory)get_number_value_from_table("Category");
-								weapon.handling = (WeaponHandling)get_number_value_from_table("Handling");
-								weapon.weight = (WeaponWeight)get_number_value_from_table("Weight");
-								weapon.range = (WeaponRange)get_number_value_from_table("Range");
-								weapon.damage_type = (WeaponDamageType)get_number_value_from_table("DamageType");
-								weapon.name = get_string_value_from_table("Name");
-								weapon.element = (CharacterElements)get_number_value_from_table("Element");
-								weapon.strength = (uint8_t)get_number_value_from_table("Strength");
-								weapon.can_inflict_status = get_bool_value_from_table("CanInflictStatus");
+								weapon.collection_index = (uint8_t)LuaHelpers::get_number_value_from_table(L, "CollectionIndex");
+								weapon.category = (WeaponCategory)LuaHelpers::get_number_value_from_table(L, "Category");
+								weapon.handling = (WeaponHandling)LuaHelpers::get_number_value_from_table(L, "Handling");
+								weapon.weight = (WeaponWeight)LuaHelpers::get_number_value_from_table(L, "Weight");
+								weapon.range = (WeaponRange)LuaHelpers::get_number_value_from_table(L, "Range");
+								weapon.damage_type = (WeaponDamageType)LuaHelpers::get_number_value_from_table(L, "DamageType");
+								weapon.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								weapon.element = (CharacterElements)LuaHelpers::get_number_value_from_table(L, "Element");
+								weapon.strength = (uint8_t)LuaHelpers::get_number_value_from_table(L, "Strength");
+								weapon.can_inflict_status = LuaHelpers::get_bool_value_from_table(L, "CanInflictStatus");
 
 								if (weapon.can_inflict_status) {
-									weapon.inflicted_status = (uint8_t)get_number_value_from_table("InflictedStatus");
+									weapon.inflicted_status = (uint8_t)LuaHelpers::get_number_value_from_table(L, "InflictedStatus");
 								}
 								else {
 									weapon.inflicted_status = 0;
@@ -342,14 +217,14 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetPassiveAbility(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Passive Ability object from lua table
 							CharacterPassiveAbility passive_ability;
 
 							try {
-								passive_ability.name = get_string_value_from_table("Name");
-								passive_ability.effect = get_string_value_from_table("Effect");
+								passive_ability.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								passive_ability.effect = LuaHelpers::get_string_value_from_table(L, "Effect");
 								passive_ability.native_element = (CharacterElements)i;
 							}
 							catch (unexpected_type_error& e) {
@@ -376,7 +251,7 @@ namespace le_hero {
 			// get number of Special Abilities from global lua variable
 			int num_special_abilities = 0;
 			try {
-				num_special_abilities = (int)get_global_number_variable("num_special_abilities");
+				num_special_abilities = (int)LuaHelpers::get_global_number_variable(L, "num_special_abilities");
 			}
 			catch (unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -391,20 +266,20 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetSpecialAbility(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Special Ability object from lua table
 							CharacterSpecialAbility special_ability;
 
 							try {
-								special_ability.name = get_string_value_from_table("Name");
-								special_ability.effect = get_string_value_from_table("Effect");
-								special_ability.cost_to_learn = (uint16_t)get_number_value_from_table("CostToLearn");
+								special_ability.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								special_ability.effect = LuaHelpers::get_string_value_from_table(L, "Effect");
+								special_ability.cost_to_learn = (uint16_t)LuaHelpers::get_number_value_from_table(L, "CostToLearn");
 
 								// construct Special Ability Requirements from WeaponReqs and ElementSupport properties
 								CharacterSpecialAbilityRequirements reqs;
-								std::bitset<2> weapon_reqs = (uint8_t)get_number_value_from_table("WeaponReqs");
-								std::bitset<6> element_support = (uint8_t)get_number_value_from_table("ElementSupport");
+								std::bitset<2> weapon_reqs = (uint8_t)LuaHelpers::get_number_value_from_table(L, "WeaponReqs");
+								std::bitset<6> element_support = (uint8_t)LuaHelpers::get_number_value_from_table(L, "ElementSupport");
 
 								reqs.melee_range_weapon_needed = weapon_reqs[1];
 								reqs.long_range_weapon_needed = weapon_reqs[0];
@@ -442,7 +317,7 @@ namespace le_hero {
 			// get number of Items from global lua variable
 			int num_items = 0;
 			try {
-				num_items = (int)get_global_number_variable("num_items");
+				num_items = (int)LuaHelpers::get_global_number_variable(L, "num_items");
 			}
 			catch (unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -457,19 +332,19 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetItem(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Item object from lua table
 							CharacterItem item;
 
 							try {
-								item.name = get_string_value_from_table("Name");
-								item.effect = get_string_value_from_table("Effect");
-								item.item_type = (CharacterItemType)get_number_value_from_table("ItemType");
-								item.item_rank = (CharacterItemRank)get_number_value_from_table("ItemRank");
-								item.item_element = (CharacterElements)get_number_value_from_table("ItemElement");
-								item.cost = (uint32_t)get_number_value_from_table("Cost");
-								item.available_at_level = (uint8_t)get_number_value_from_table("AvailableAtLevel");
+								item.name = LuaHelpers::get_string_value_from_table(L, "Name");
+								item.effect = LuaHelpers::get_string_value_from_table(L, "Effect");
+								item.item_type = (CharacterItemType)LuaHelpers::get_number_value_from_table(L, "ItemType");
+								item.item_rank = (CharacterItemRank)LuaHelpers::get_number_value_from_table(L, "ItemRank");
+								item.item_element = (CharacterElements)LuaHelpers::get_number_value_from_table(L, "ItemElement");
+								item.cost = (uint32_t)LuaHelpers::get_number_value_from_table(L, "Cost");
+								item.available_at_level = (uint8_t)LuaHelpers::get_number_value_from_table(L, "AvailableAtLevel");
 							}
 							catch (unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
@@ -495,7 +370,7 @@ namespace le_hero {
 			// get number of Quest references from global lua variable
 			int num_quests = 0;
 			try {
-				num_quests = (int)get_global_number_variable("num_quests");
+				num_quests = (int)LuaHelpers::get_global_number_variable(L, "num_quests");
 			}
 			catch (unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -510,14 +385,14 @@ namespace le_hero {
 					lua_pushnumber(L, i);
 
 					// call GetQuestRef(i)
-					if (validate_lua(lua_pcall(L, 1, 1, 0))) {
+					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
 						if (lua_istable(L, -1)) {
 							// construct Quest reference from lua table
 							std::pair<std::string, std::string> quest_ref;
 
 							try {
-								std::string quest_file = get_string_value_from_table("QuestFile");
-								std::string quest_name = get_string_value_from_table("QuestName");
+								std::string quest_file = LuaHelpers::get_string_value_from_table(L, "QuestFile");
+								std::string quest_name = LuaHelpers::get_string_value_from_table(L, "QuestName");
 
 								quest_ref = std::make_pair(quest_file, quest_name);
 							}
@@ -559,12 +434,12 @@ namespace le_hero {
 			luaL_openlibs(L); // enable lua standard libraries
 
 			// ensure integrity of settings file
-			if (!validate_lua(luaL_dofile(L, file_name.c_str()))) {
+			if (!LuaHelpers::validate_lua(L, luaL_dofile(L, file_name.c_str()))) {
 				return false;
 			}
 
 			try {
-				quests_index_file = get_global_string_variable("quests_index_file");
+				quests_index_file = LuaHelpers::get_global_string_variable(L, "quests_index_file");
 			}
 			catch (unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -605,23 +480,6 @@ namespace le_hero {
 			return true;
 		}
 
-		bool LuaHandler::parse_quest_file(std::string quest_file)
-		{
-			L = luaL_newstate(); // initialize lua stack
-			luaL_openlibs(L); // enable lua standard libraries
-
-			// ensure integrity of quest file
-			if (!validate_lua(luaL_dofile(L, quest_file.c_str()))) {
-				return false;
-			}
-
-			// parse quest data
-			
-			// close lua state
-			lua_close(L);
-			return true;
-		}
-
 		// Parses quests index file for game environment
 		bool LuaHandler::parse_quests_index_file(std::string quests_index_file, std::vector<std::pair<std::string, std::string>>& qr)
 		{
@@ -629,7 +487,7 @@ namespace le_hero {
 			luaL_openlibs(L); // enable lua standard libraries
 
 			// ensure integrity of index file
-			if (!validate_lua(luaL_dofile(L, quests_index_file.c_str()))) {
+			if (!LuaHelpers::validate_lua(L, luaL_dofile(L, quests_index_file.c_str()))) {
 				return false;
 			}
 

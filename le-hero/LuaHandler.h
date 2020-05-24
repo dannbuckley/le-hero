@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "lua-5_3_5/include/lua.hpp"
+#include "LuaIncludes.h"
 #include "CharacterElement.h"
 #include "CharacterItem.h"
 #include "CharacterPassiveAbility.h"
@@ -18,25 +18,12 @@
 #include "CharacterStatus.h"
 #include "CharacterWeapon.h"
 
-#ifdef _WIN32
-#pragma comment(lib, "lua-5_3_5/liblua53.a")
-#endif
-
 namespace le_hero {
 	namespace lua {
 		class LuaHandler
 		{
 		private:
 			lua_State* L;
-
-			bool validate_lua(int r);
-
-			std::string get_global_string_variable(std::string var_name);
-			lua_Number get_global_number_variable(std::string var_name);
-
-			std::string get_string_value_from_table(std::string key);
-			lua_Number get_number_value_from_table(std::string key);
-			bool get_bool_value_from_table(std::string key);
 
 			/* Object Parsers for Base Settings File */
 
@@ -69,10 +56,6 @@ namespace le_hero {
 			// Parser for quests/index.lua
 			bool parse_quests_index_file(std::string quests_index_file,
 				std::vector<std::pair<std::string, std::string>>& qr);
-
-			// Parser for quest data file in quests/ folder
-			bool parse_quest_file(std::string quest_file);
 		};
 	}
 }
-

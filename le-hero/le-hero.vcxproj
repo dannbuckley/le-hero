@@ -152,6 +152,7 @@
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="le-hero.cpp" />
     <ClCompile Include="LuaHandler.cpp" />
+    <ClCompile Include="LuaQuestHandler.cpp" />
     <ClCompile Include="QuestHandler.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -166,7 +167,10 @@
     <ClInclude Include="CharacterStatus.h" />
     <ClInclude Include="CharacterWeapon.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="LuaDefaults.h" />
     <ClInclude Include="LuaHandler.h" />
+    <ClInclude Include="LuaIncludes.h" />
+    <ClInclude Include="LuaQuestHandler.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestHandler.h" />
     <ClInclude Include="StateHandler.h" />

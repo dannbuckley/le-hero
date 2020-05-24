@@ -40,6 +40,8 @@ namespace le_hero {
 		bool act_in_stateless(enum state::StateActions action);
 		bool act_in_initializing(enum state::StateActions action);
 		bool act_in_parsing(enum state::StateActions action);
+		bool act_in_quest(enum state::StateActions action);
+		bool act_in_menu(enum state::StateActions action);
 
 	protected:
 		bool enter_state(enum state::StateTypes new_state);
@@ -61,8 +63,9 @@ namespace le_hero {
 		size_t get_num_special_abilities();
 		size_t get_num_items();
 
+		std::pair<std::string, std::string> get_quest_ref(uint8_t index);
+
 		bool act(enum state::StateActions action);
 		enum state::StateTypes get_current_state();
 	};
 }
-

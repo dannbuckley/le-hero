@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "LuaQuestHandler.h"
 #include "CharacterBattleHandler.h"
 
 // gabime/spdlog, installed via vcpkg
@@ -46,6 +47,9 @@ int main()
     // create the player's character using the game environment
     std::shared_ptr<le_hero::Character> character = std::make_shared<le_hero::Character>(game);
     std::shared_ptr<le_hero::CharacterBattleHandler> character_battle = std::make_shared<le_hero::CharacterBattleHandler>(character);
+
+    // create object to parse quest files
+    std::shared_ptr<le_hero::lua::LuaQuestHandler> lua_quest_handler = std::make_shared<le_hero::lua::LuaQuestHandler>();
 
     return EXIT_SUCCESS;
 }
