@@ -95,6 +95,12 @@
     <ClInclude Include="LuaDefaults.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameExceptions.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />
@@ -123,6 +129,9 @@
       <Filter>Quest Scripts</Filter>
     </None>
     <None Include="quests\quest_template.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_rekindled_acquaintances.lua">
       <Filter>Quest Scripts</Filter>
     </None>
   </ItemGroup>

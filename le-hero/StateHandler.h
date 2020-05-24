@@ -19,7 +19,7 @@ namespace le_hero {
             /* Parsing mode states */
             PARSING_SETTINGS,
             PARSING_QUESTS_INDEX,
-            PARSING_QUEST_FILE,
+            PARSING_QUEST_FILES,
 
             /* Quest mode states */
             EMBARKING_ON_QUEST,
@@ -44,8 +44,8 @@ namespace le_hero {
             FINISH_PARSING_SETTINGS,
             START_PARSING_QUESTS_INDEX,
             FINISH_PARSING_QUESTS_INDEX,
-            START_PARSING_QUEST_FILE,
-            FINISH_PARSING_QUEST_FILE,
+            START_PARSING_QUEST_FILES,
+            FINISH_PARSING_QUEST_FILES,
 
             /* Quest mode actions */
             START_QUEST,
@@ -92,8 +92,8 @@ namespace le_hero {
                     return "PARSING_SETTINGS";
                 case StateTypes::PARSING_QUESTS_INDEX:
                     return "PARSING_QUESTS_INDEX";
-                case StateTypes::PARSING_QUEST_FILE:
-                    return "PARSING_QUEST_FILE";
+                case StateTypes::PARSING_QUEST_FILES:
+                    return "PARSING_QUEST_FILES";
 
                     /* Quest mode states */
                 case StateTypes::EMBARKING_ON_QUEST:
@@ -136,10 +136,10 @@ namespace le_hero {
                     return "START_PARSING_QUESTS_INDEX";
                 case StateActions::FINISH_PARSING_QUESTS_INDEX:
                     return "FINISH_PARSING_QUESTS_INDEX";
-                case StateActions::START_PARSING_QUEST_FILE:
-                    return "START_PARSING_QUEST_FILE";
-                case StateActions::FINISH_PARSING_QUEST_FILE:
-                    return "FINISH_PARSING_QUEST_FILE";
+                case StateActions::START_PARSING_QUEST_FILES:
+                    return "START_PARSING_QUEST_FILES";
+                case StateActions::FINISH_PARSING_QUEST_FILES:
+                    return "FINISH_PARSING_QUEST_FILES";
 
                     /* Quest mode actions */
                 case StateActions::START_QUEST:

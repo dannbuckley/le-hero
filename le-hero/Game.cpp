@@ -5,15 +5,10 @@
 
 #include <exception>
 #include "Game.h"
+#include "GameExceptions.h"
 #include "spdlog/spdlog.h"
 
 namespace le_hero {
-    struct unsuccessful_lua_parse_error : public std::exception {
-        const char* what() const throw() {
-            return "Encountered an error while parsing a Lua game file. See 'log.txt' for more info.";
-        }
-    };
-
     // Handles act() calls while in stateless mode
     bool Game::act_in_stateless(enum state::StateActions action)
     {
@@ -23,9 +18,9 @@ namespace le_hero {
             // enter initialization mode
             return this->enter_state(state::StateTypes::INITIALIZING);
 
-        case state::StateActions::START_PARSING_QUEST_FILE:
+        case state::StateActions::START_PARSING_QUEST_FILES:
             // enter parsing mode
-            return this->enter_state(state::StateTypes::PARSING_QUEST_FILE);
+            return this->enter_state(state::StateTypes::PARSING_QUEST_FILES);
 
         case state::StateActions::START_QUEST:
             // enter quest mode
@@ -71,7 +66,7 @@ namespace le_hero {
         switch (action) {
         case state::StateActions::FINISH_PARSING_SETTINGS:
         case state::StateActions::FINISH_PARSING_QUESTS_INDEX:
-        case state::StateActions::FINISH_PARSING_QUEST_FILE:
+        case state::StateActions::FINISH_PARSING_QUEST_FILES:
             // exit parsing mode
             return this->exit_current_state();
 
@@ -199,8 +194,10 @@ namespace le_hero {
 
         // check if the base settings file has been parsed properly
         if (!parse_result) {
-            throw unsuccessful_lua_parse_error();
+            throw exception::unsuccessful_lua_parse_error();
         }
+
+        spdlog::get("logger")->info("Game settings parsed successfully.");
 
         this->act(state::StateActions::START_PARSING_QUESTS_INDEX);
 
@@ -211,8 +208,10 @@ namespace le_hero {
 
         // check if the quests index file has been parsed properly
         if (!parse_result) {
-            throw unsuccessful_lua_parse_error();
+            throw exception::unsuccessful_lua_parse_error();
         }
+
+        spdlog::get("logger")->info("References to quest data parsed successfully.");
 
         this->act(state::StateActions::FINISH_SETUP);
     }
@@ -272,7 +271,12 @@ namespace le_hero {
         return items.size();
     }
 
-    std::pair<std::string, std::string> Game::get_quest_ref(uint8_t index)
+	size_t Game::get_num_quest_refs()
+	{
+		return quest_references.size();
+	}
+
+	std::pair<std::string, std::string> Game::get_quest_ref(uint8_t index)
     {
         return quest_references[index];
     }
@@ -294,7 +298,7 @@ namespace le_hero {
 
         case state::StateTypes::PARSING_SETTINGS:
         case state::StateTypes::PARSING_QUESTS_INDEX:
-        case state::StateTypes::PARSING_QUEST_FILE:
+        case state::StateTypes::PARSING_QUEST_FILES:
             return act_in_parsing(action);
 
         case state::StateTypes::EMBARKING_ON_QUEST:

@@ -30,8 +30,8 @@ end
 -- Setup quest prize weapons
 function st_prize_weapons()
 	weapons = {};
-	weapons[0] = get_weapon_index(0, 0);
-	weapons[1] = get_weapon_index(0, 1);
+	weapons[0] = get_weapon_index(0, 0); -- Slingshot
+	weapons[1] = get_weapon_index(0, 1); -- Sword
 	return weapons
 end
 
@@ -40,5 +40,5 @@ function GetQuest()
 	ei = st_enemy_info();
 	pi = st_prize_items();
 	pw = st_prize_weapons();
-	return mk_quest("The beginning of a very long journey.", 4, ei, 0, 0, 0, 0, 3, pi, 2, pw)
+	return mk_quest("The beginning of a very long journey.", 4, ei, 5, 0, 80000, 6, 3, pi, 2, pw)
 end

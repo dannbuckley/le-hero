@@ -35,7 +35,7 @@ namespace le_hero {
 								element.base_health = (uint8_t)LuaHelpers::get_number_value_from_table(L, "BaseHealth");
 								element.element_identifier = (CharacterElements)i;
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -75,7 +75,7 @@ namespace le_hero {
 								rank.speed_boost = (uint8_t)LuaHelpers::get_number_value_from_table(L, "SpeedBoost");
 								rank.health_boost = (uint8_t)LuaHelpers::get_number_value_from_table(L, "HealthBoost");
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -101,7 +101,7 @@ namespace le_hero {
 			try {
 				num_statuses = (int)LuaHelpers::get_global_number_variable(L, "num_statuses");
 			}
-			catch (unexpected_type_error& e) {
+			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
@@ -125,7 +125,7 @@ namespace le_hero {
 								status.effect_length = (uint8_t)LuaHelpers::get_number_value_from_table(L, "EffectLength");
 								status.status_type = (CharacterStatusTypes)LuaHelpers::get_number_value_from_table(L, "StatusType");
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -151,7 +151,7 @@ namespace le_hero {
 			try {
 				num_weapons = (int)LuaHelpers::get_global_number_variable(L, "num_weapons");
 			}
-			catch (unexpected_type_error& e) {
+			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
@@ -188,7 +188,7 @@ namespace le_hero {
 									weapon.inflicted_status = 0;
 								}
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -227,7 +227,7 @@ namespace le_hero {
 								passive_ability.effect = LuaHelpers::get_string_value_from_table(L, "Effect");
 								passive_ability.native_element = (CharacterElements)i;
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -253,7 +253,7 @@ namespace le_hero {
 			try {
 				num_special_abilities = (int)LuaHelpers::get_global_number_variable(L, "num_special_abilities");
 			}
-			catch (unexpected_type_error& e) {
+			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
@@ -293,7 +293,7 @@ namespace le_hero {
 
 								special_ability.requirements = reqs;
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -319,7 +319,7 @@ namespace le_hero {
 			try {
 				num_items = (int)LuaHelpers::get_global_number_variable(L, "num_items");
 			}
-			catch (unexpected_type_error& e) {
+			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
@@ -346,7 +346,7 @@ namespace le_hero {
 								item.cost = (uint32_t)LuaHelpers::get_number_value_from_table(L, "Cost");
 								item.available_at_level = (uint8_t)LuaHelpers::get_number_value_from_table(L, "AvailableAtLevel");
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -372,7 +372,7 @@ namespace le_hero {
 			try {
 				num_quests = (int)LuaHelpers::get_global_number_variable(L, "num_quests");
 			}
-			catch (unexpected_type_error& e) {
+			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
@@ -396,7 +396,7 @@ namespace le_hero {
 
 								quest_ref = std::make_pair(quest_file, quest_name);
 							}
-							catch (unexpected_type_error& e) {
+							catch (exception::unexpected_type_error& e) {
 								std::cout << e.what() << std::endl;
 								return false;
 							}
@@ -441,7 +441,7 @@ namespace le_hero {
 			try {
 				quests_index_file = LuaHelpers::get_global_string_variable(L, "quests_index_file");
 			}
-			catch (unexpected_type_error& e) {
+			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}

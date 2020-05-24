@@ -63,6 +63,7 @@ namespace le_hero {
 		size_t get_num_special_abilities();
 		size_t get_num_items();
 
+		size_t get_num_quest_refs();
 		std::pair<std::string, std::string> get_quest_ref(uint8_t index);
 
 		bool act(enum state::StateActions action);

@@ -167,6 +167,7 @@
     <ClInclude Include="CharacterStatus.h" />
     <ClInclude Include="CharacterWeapon.h" />
     <ClInclude Include="Game.h" />
+    <ClInclude Include="GameExceptions.h" />
     <ClInclude Include="LuaDefaults.h" />
     <ClInclude Include="LuaHandler.h" />
     <ClInclude Include="LuaIncludes.h" />
@@ -174,6 +175,7 @@
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestHandler.h" />
     <ClInclude Include="StateHandler.h" />
+    <ClInclude Include="Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />
@@ -181,6 +183,7 @@
     <None Include="quests\quest_into_the_depths.lua" />
     <None Include="quests\quest_onward_young_hero.lua" />
     <None Include="quests\quest_out_of_the_frying_pan.lua" />
+    <None Include="quests\quest_rekindled_acquaintances.lua" />
     <None Include="quests\quest_soaring_through_the_night.lua" />
     <None Include="quests\quest_template.lua" />
     <None Include="quests\quest_the_first_of_many.lua" />

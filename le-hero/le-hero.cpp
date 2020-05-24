@@ -51,5 +51,19 @@ int main()
     // create object to parse quest files
     std::shared_ptr<le_hero::lua::LuaQuestHandler> lua_quest_handler = std::make_shared<le_hero::lua::LuaQuestHandler>();
 
+    // parse and load all quest data
+    game->act(le_hero::state::StateActions::START_PARSING_QUEST_FILES);
+    std::vector<le_hero::quest::Quest> quests;
+    try {
+        quests = lua_quest_handler->load_all_quests(game);
+    }
+    catch (std::exception& e) {
+        std::cout << e.what() << std::endl;
+        return EXIT_FAILURE;
+    }
+    game->act(le_hero::state::StateActions::FINISH_PARSING_QUEST_FILES);
+
+    spdlog::get("logger")->info("Quest data parsed successfully.");
+
     return EXIT_SUCCESS;
 }

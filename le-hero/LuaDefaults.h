@@ -8,17 +8,12 @@
 #include <iostream>
 #include <exception>
 #include <string>
+#include "GameExceptions.h"
 #include "LuaIncludes.h"
 #include "spdlog/spdlog.h"
 
 namespace le_hero {
-    namespace lua {
-        struct unexpected_type_error : public std::exception {
-            const char* what() const throw() {
-                return "Unexpected type encountered when parsing Lua file. See 'log.txt' for more info.";
-            }
-        };
-
+	namespace lua {
 		class LuaHelpers {
 		public:
 			// Validates a given lua response value
@@ -42,7 +37,7 @@ namespace le_hero {
 				if (!lua_isstring(L, -1)) {
 					// throw exception for unexpected type
 					spdlog::get("logger")->error("Unexpected type for Lua global variable in call LuaHelpers::get_global_string_variable({})", var_name);
-					throw unexpected_type_error();
+					throw exception::unexpected_type_error();
 				}
 
 				// convert value to string
@@ -63,7 +58,7 @@ namespace le_hero {
 				if (!lua_isnumber(L, -1)) {
 					// throw exception for unexpected type
 					spdlog::get("logger")->error("Unexpected type for Lua global variable in call LuaHelpers::get_global_number_variable({})", var_name);
-					throw unexpected_type_error();
+					throw exception::unexpected_type_error();
 				}
 
 				// convert value to number
@@ -85,7 +80,7 @@ namespace le_hero {
 				if (!lua_isstring(L, -1)) {
 					// throw exception for unexpected type
 					spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHelpers::get_string_value_from_table({})", key);
-					throw unexpected_type_error();
+					throw exception::unexpected_type_error();
 				}
 
 				// convert value to string
@@ -107,7 +102,7 @@ namespace le_hero {
 				if (!lua_isnumber(L, -1)) {
 					// throw exception for unexpected type
 					spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHelpers::get_number_value_from_table({})", key);
-					throw unexpected_type_error();
+					throw exception::unexpected_type_error();
 				}
 
 				// convert value to number
@@ -129,7 +124,7 @@ namespace le_hero {
 				if (!lua_isboolean(L, -1)) {
 					// throw exception for unexpected type
 					spdlog::get("logger")->error("Unexpected type for Lua table value in call LuaHelpers::get_bool_value_from_table({})", key);
-					throw unexpected_type_error();
+					throw exception::unexpected_type_error();
 				}
 
 				// convert value to boolean
@@ -140,5 +135,5 @@ namespace le_hero {
 				return value;
 			}
 		};
-    }
+	}
 }

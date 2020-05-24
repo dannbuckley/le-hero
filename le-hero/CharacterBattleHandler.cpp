@@ -68,7 +68,7 @@ namespace le_hero {
         return true;
     }
 
-    uint16_t le_hero::CharacterBattleHandler::calculate_battle_attack_stat()
+    uint16_t CharacterBattleHandler::calculate_battle_attack_stat()
     {
         return (uint16_t)floorf(this->attack_modifier * this->base->calculate_attack_stat());
     }
