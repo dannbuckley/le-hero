@@ -63,13 +63,17 @@ namespace le_hero {
         Character(std::shared_ptr<Game> game_env);
         Character(std::shared_ptr<Game> game_env, CharacterMeta meta);
 
+        std::shared_ptr<Game> get_environment();
+
         uint16_t calculate_attack_stat();
         uint16_t calculate_speed_stat();
         uint16_t calculate_health_stat();
 
         CharacterElement get_element();
         CharacterRank get_rank();
+        CharacterPassiveAbility get_passive_ability();
         CharacterWeapon get_equipped_weapon();
+        CharacterSpecialAbility get_special_ability();
 
         void gain_coins(uint32_t coin_yield);
         void gain_exp(uint16_t exp_yield);

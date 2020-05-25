@@ -6,6 +6,7 @@
 #include <bitset>
 #include <cmath>
 #include "CharacterBattleHandler.h"
+#include "CharacterEffectFunctions.h"
 
 namespace le_hero {
 	CharacterBattleHandler::CharacterBattleHandler()
@@ -20,6 +21,21 @@ namespace le_hero {
         this->reset_stats(true);
     }
 
+    CharacterPassiveAbility CharacterBattleHandler::get_passive_ability()
+    {
+        return this->base->get_passive_ability();
+    }
+
+    CharacterWeapon CharacterBattleHandler::get_equipped_weapon()
+    {
+        return this->base->get_equipped_weapon();
+    }
+
+    CharacterSpecialAbility CharacterBattleHandler::get_special_ability()
+    {
+        return this->base->get_special_ability();
+    }
+
 	bool CharacterBattleHandler::is_ready()
 	{
 		return this->ready;
@@ -28,6 +44,11 @@ namespace le_hero {
     bool CharacterBattleHandler::is_in_battle()
     {
         return this->currently_in_battle;
+    }
+
+    enum CharacterActionTypes CharacterBattleHandler::get_selected_action()
+    {
+        return this->selected_action;
     }
 
     bool CharacterBattleHandler::cure_status()
@@ -56,6 +77,33 @@ namespace le_hero {
         return true;
     }
 
+    bool CharacterBattleHandler::inflict_status(uint8_t new_status)
+    {
+        // check if the Character is already inflicted with a status
+        if (this->status_turns_left != 0) {
+            return false;
+        }
+
+        // get status data from game environment
+        auto env = this->base->get_environment();
+        auto new_status_data = env->get_status(new_status);
+
+        // inflict the Character with the provided status
+        this->inflicted_status = new_status_data;
+        this->status_turns_left = new_status_data.effect_length;
+        return false;
+    }
+
+    CharacterStatus CharacterBattleHandler::get_inflicted_status()
+    {
+        return this->inflicted_status;
+    }
+
+    uint8_t CharacterBattleHandler::get_status_turns_left()
+    {
+        return this->status_turns_left;
+    }
+
     bool CharacterBattleHandler::restore_armor()
     {
         // check if the Character still has armor
@@ -66,6 +114,11 @@ namespace le_hero {
         // completely restore the Character's armor
         this->armor_turns_left = this->base->get_element().armor_turns;
         return true;
+    }
+
+    uint8_t CharacterBattleHandler::get_armor_turns_left()
+    {
+        return this->armor_turns_left;
     }
 
     uint16_t CharacterBattleHandler::calculate_battle_attack_stat()
@@ -82,6 +135,11 @@ namespace le_hero {
     {
         return this->current_health;
     }
+
+	uint16_t CharacterBattleHandler::get_maximum_health()
+	{
+		return this->base->calculate_health_stat();
+	}
 
     uint16_t CharacterBattleHandler::damage_health(uint16_t amount, bool bypass_armor)
     {
@@ -136,6 +194,21 @@ namespace le_hero {
         return this->current_health;
     }
 
+    enum CharacterElements CharacterBattleHandler::get_area_terrain()
+    {
+        return this->area_terrain;
+    }
+
+	void CharacterBattleHandler::apply_attack_modifier(float mod)
+	{
+        this->attack_modifier *= mod;
+	}
+
+    void CharacterBattleHandler::apply_speed_modifier(float mod)
+    {
+        this->speed_modifier *= mod;
+    }
+
     void CharacterBattleHandler::end_battle()
     {
         reset_stats(true);
@@ -152,7 +225,7 @@ namespace le_hero {
         // if the Character is inflicted with a status,
         // activate its effect and decrement the number of turns inflicted left
         if (this->status_turns_left != 0) {
-            // TODO: call status effect function
+            effect::activate_status_effect(this);
             --this->status_turns_left;
 
             if (this->status_turns_left == 0) {
@@ -165,12 +238,6 @@ namespace le_hero {
         if (this->armor_turns_left > 0) {
             --this->armor_turns_left;
         }
-    }
-
-    void CharacterBattleHandler::perform_action(std::shared_ptr<CharacterBattleHandler> enemy)
-    {
-        // TODO: call action function
-        reset_turn_data();
     }
 
     void CharacterBattleHandler::reset_stats(bool reset_all)
@@ -193,6 +260,7 @@ namespace le_hero {
             this->armor_turns_left = this->base->get_element().armor_turns;
             this->inflicted_status = CharacterStatus();
             this->status_turns_left = 0;
+            this->damage_dealt = 0;
         }
     }
 
@@ -204,7 +272,12 @@ namespace le_hero {
 
     bool CharacterBattleHandler::use_item(uint8_t item_index)
     {
-        // TODO: call item effect function
+        if (effect::activate_item_effect(item_index, this)) {
+            this->base->remove_item(item_index, 1);
+            return true;
+        }
+
+        // return false if item has no effect
         return false;
     }
 
@@ -310,5 +383,10 @@ namespace le_hero {
         this->area_terrain = terrain;
         reset_stats(true);
         this->currently_in_battle = true;
+    }
+
+    void CharacterBattleHandler::register_damage_dealt(uint16_t damage)
+    {
+        this->damage_dealt = damage;
     }
 }

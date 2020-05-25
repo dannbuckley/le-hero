@@ -3,6 +3,8 @@
  * Copyright (c) 2020 Daniel Buckley
  */
 
+#include <cmath>
+#include "CharacterEffectFunctions.h"
 #include "QuestHandler.h"
 
 namespace le_hero {
@@ -50,6 +52,57 @@ namespace le_hero {
             this->end_quest(true);
         }
 
+        bool QuestHandler::perform_weapon_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy)
+        {
+            auto equipped_weapon = self->get_equipped_weapon();
+            uint8_t wpn_strength = equipped_weapon.strength;
+            auto p_abil = self->get_passive_ability();
+            if (equipped_weapon.element == p_abil.native_element) {
+                wpn_strength += 20; // same-element bonus damage
+            }
+            uint16_t damage = (uint16_t)floorf((self->calculate_battle_attack_stat() * (wpn_strength / 100.0f)) + 3.0f);
+
+            uint16_t eh_before = enemy->get_current_health();
+            uint16_t eh_after = enemy->damage_health(damage);
+            self->register_damage_dealt(eh_before - eh_after);
+
+            if (equipped_weapon.can_inflict_status) {
+                enemy->inflict_status(equipped_weapon.inflicted_status);
+            }
+
+            return true;
+        }
+
+        bool QuestHandler::perform_special_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy)
+        {
+            return effect::activate_special_ability_effect(self, enemy);
+        }
+
+        bool QuestHandler::perform_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy)
+        {
+            bool result = false;
+            auto selected_action = self->get_selected_action();
+
+            switch (selected_action) {
+            case CharacterActionTypes::PASS:
+                result = true;
+                break;
+            case CharacterActionTypes::WEAPON:
+                result = this->perform_weapon_action(self, enemy);
+                break;
+            case CharacterActionTypes::SPECIAL_ABILITY:
+                result = this->perform_special_action(self, enemy);
+                break;
+            default:
+                // not a valid action
+                break;
+            }
+
+            self->reset_turn_data();
+
+            return result;
+        }
+
         QuestHandler::QuestHandler(std::shared_ptr<Game> env,
             std::shared_ptr<Quest> base,
             std::shared_ptr<CharacterBattleHandler> player):
@@ -68,22 +121,23 @@ namespace le_hero {
 
             this->env->act(state::StateActions::QUEST_START_PERFORM_ACTIONS);
 
-            // TODO: activate player passive ability
-            // TODO: activate enemy passive ability
+            // activate passive abilities
+            effect::activate_passive_ability_effect(this->player);
+            effect::activate_passive_ability_effect(this->current_enemy);
 
             uint16_t player_current_speed = this->player->calculate_battle_speed_stat();
             uint16_t enemy_current_speed = this->current_enemy->calculate_battle_speed_stat();
 
             if (player_current_speed >= enemy_current_speed) {
                 // player is faster than / as fast as the enemy
-                this->player->perform_action(this->current_enemy);
+                this->perform_action(this->player, this->current_enemy);
                 if (this->current_enemy->get_current_health() == 0) {
                     // player defeats the enemy
                     this->enemy_defeated();
                     return true;
                 }
 
-                this->current_enemy->perform_action(this->player);
+                this->perform_action(this->current_enemy, this->player);
                 if (this->player->get_current_health() == 0) {
                     // enemy defeats the player
                     this->player_defeated();
@@ -92,14 +146,14 @@ namespace le_hero {
             }
             else {
                 // player is slower than the enemy
-                this->current_enemy->perform_action(this->player);
+                this->perform_action(this->current_enemy, this->player);
                 if (this->player->get_current_health() == 0) {
                     // enemy defeats the player
                     this->player_defeated();
                     return true;
                 }
 
-                this->player->perform_action(this->player);
+                this->perform_action(this->player, this->current_enemy);
                 if (this->current_enemy->get_current_health() == 0) {
                     // player defeats the enemy
                     this->enemy_defeated();

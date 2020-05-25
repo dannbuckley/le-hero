@@ -118,6 +118,7 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Status object from lua table
 							CharacterStatus status;
+							status.index = i;
 
 							try {
 								status.name = LuaHelpers::get_string_value_from_table(L, "Name");

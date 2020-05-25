@@ -100,6 +100,11 @@ namespace le_hero {
 		this->update_level();
 	}
 
+	std::shared_ptr<Game> Character::get_environment()
+	{
+		return this->env;
+	}
+
 	uint16_t Character::calculate_attack_stat()
 	{
 		uint16_t base_attack = this->element.base_attack + this->rank.attack_boost;
@@ -143,9 +148,19 @@ namespace le_hero {
 		return this->rank;
 	}
 
+	CharacterPassiveAbility Character::get_passive_ability()
+	{
+		return this->passive_ability;
+	}
+
 	CharacterWeapon Character::get_equipped_weapon()
 	{
 		return this->weapon;
+	}
+
+	CharacterSpecialAbility Character::get_special_ability()
+	{
+		return this->acquired_ability;
 	}
 
 	// Adds coin_yield to the Character's amount of coins

@@ -46,24 +46,41 @@ namespace le_hero {
         CharacterBattleHandler();
         CharacterBattleHandler(std::shared_ptr<Character> base);
 
+        CharacterPassiveAbility get_passive_ability();
+        CharacterWeapon get_equipped_weapon();
+        CharacterSpecialAbility get_special_ability();
+
         bool is_ready();
         bool is_in_battle();
 
+        enum CharacterActionTypes get_selected_action();
+
         bool cure_status();
         bool inflict_status(CharacterStatus new_status);
+        bool inflict_status(uint8_t new_status);
+        CharacterStatus get_inflicted_status();
+        uint8_t get_status_turns_left();
+
         bool restore_armor();
+        uint8_t get_armor_turns_left();
 
         uint16_t calculate_battle_attack_stat();
         uint16_t calculate_battle_speed_stat();
 
         uint16_t get_current_health();
+        uint16_t get_maximum_health();
         uint16_t damage_health(uint16_t amount, bool bypass_armor = false);
         uint16_t restore_health(uint16_t amount);
 
+        enum CharacterElements get_area_terrain();
+
+        void apply_attack_modifier(float mod);
+        void apply_speed_modifier(float mod);
+
         void end_battle();
         void new_turn();
-        void perform_action(std::shared_ptr<CharacterBattleHandler> enemy);
         void register_battle(enum CharacterElements terrain);
+        void register_damage_dealt(uint16_t damage);
         void reset_stats(bool reset_all = false);
         void reset_turn_data();
         void select_action(enum CharacterActionTypes action);

@@ -31,6 +31,10 @@ namespace le_hero {
 			void enemy_defeated();
 			void player_defeated();
 
+			bool perform_weapon_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy);
+			bool perform_special_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy);
+			bool perform_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy);
+
 		public:
 			QuestHandler(std::shared_ptr<Game> env,
 				std::shared_ptr<Quest> base,

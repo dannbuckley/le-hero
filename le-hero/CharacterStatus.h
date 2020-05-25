@@ -17,6 +17,7 @@ namespace le_hero {
 	};
 
 	typedef struct {
+		uint8_t index = 0;
 		std::string name;
 		std::string effect;
 		uint8_t effect_length = 0;

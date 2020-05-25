@@ -139,13 +139,20 @@ function mk_passive_ability(n, e)
 end
 
 passive_abilities = {}
-passive_abilities[0] = mk_passive_ability("Passive - Basic", "When Health drops below 50%, the Attack stat is doubled.")
-passive_abilities[1] = mk_passive_ability("Passive - Earth", "Power of close-range attacks increase by 30% when battling in Earth terrain.")
-passive_abilities[2] = mk_passive_ability("Passive - Air", "Power of long-range attacks increase by 30% when battling in Air terrain.")
-passive_abilities[3] = mk_passive_ability("Passive - Fire", "Attack is increased by 10% when battling in Fire terrain.")
-passive_abilities[4] = mk_passive_ability("Passive - Water", "Speed is increased by 10% when battling in Water terrain.")
+-- Basic
+passive_abilities[0] = mk_passive_ability("Firm Resolve", "When Health drops below 50%, the Attack stat is doubled.")
+-- Earth
+passive_abilities[1] = mk_passive_ability("Fighter", "Power of close-range attacks increase by 30% when battling in Earth terrain.")
+-- Air
+passive_abilities[2] = mk_passive_ability("Sniper", "Power of long-range attacks increase by 30% when battling in Air terrain.")
+-- Fire
+passive_abilities[3] = mk_passive_ability("Temper", "Attack is increased by 10% when battling in Fire terrain.")
+-- Water
+passive_abilities[4] = mk_passive_ability("Swift Swimmer", "Speed is increased by 10% when battling in Water terrain.")
+-- Mystic
 passive_abilities[5] = mk_passive_ability("Passive - Mystic", "")
-passive_abilities[6] = mk_passive_ability("Passive - Alpha", "When passing a turn, the Character recovers 25% of it's maximum health.")
+-- Alpha
+passive_abilities[6] = mk_passive_ability("Divine Nature", "When Health drops to 15%, the Character gains the Enlightened status.")
 
 -- Define special abilties
 function mk_special_ability(n, e, c, w, el)
