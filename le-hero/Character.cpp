@@ -17,28 +17,6 @@ namespace le_hero {
 		return c; // 0.0506 <= c <= 0.1751 (_level >= 1)
 	}
 
-	uint16_t Character::_calculate_exp_at_level(uint8_t _level)
-	{
-		float exp = (float)_level;
-		exp = pow(exp, 2);
-		exp /= 2.0f;
-		exp += (float)_level;
-		return (uint16_t)ceilf(exp);
-	}
-
-	uint16_t Character::_calculate_exp_to_next_level()
-	{
-		if (this->total_experience == EXPERIENCE_MAX) {
-			return 0;
-		}
-
-		float exp_next = this->level + 1.0f;
-		exp_next = pow(exp_next, 2);
-		exp_next /= 2.0f;
-		exp_next += this->level + 1.0f;
-		return (uint16_t)ceilf(exp_next) - this->total_experience;
-	}
-
 	// Updates the Character's level after gaining experience
 	void Character::update_level()
 	{
@@ -56,8 +34,8 @@ namespace le_hero {
 			// if the level does not change, the loop ends on the first iteration
 			for (uint8_t y = x; y < LEVEL_MAX; y++) {
 				uint16_t exp_min, exp_max;
-				exp_min = _calculate_exp_at_level(y);
-				exp_max = _calculate_exp_at_level(y + 1);
+				exp_min = calculate_exp_at_level(y);
+				exp_max = calculate_exp_at_level(y + 1);
 
 				if (((this->total_experience > exp_min) && (this->total_experience < exp_max)) || (this->total_experience == exp_min)) {
 					x = y;
@@ -105,6 +83,25 @@ namespace le_hero {
 		return this->env;
 	}
 
+	uint16_t Character::calculate_exp_at_level(uint8_t _level)
+	{
+		float exp = (float)_level;
+		exp = pow(exp, 2);
+		exp /= 2.0f;
+		exp += (float)_level;
+		return (uint16_t)ceilf(exp);
+	}
+
+	uint16_t Character::calculate_exp_to_next_level()
+	{
+		if (this->total_experience == EXPERIENCE_MAX) {
+			return 0;
+		}
+
+		uint16_t exp_next = calculate_exp_at_level(this->level + 1);
+		return exp_next - this->total_experience;
+	}
+
 	uint16_t Character::calculate_attack_stat()
 	{
 		uint16_t base_attack = this->element.base_attack + this->rank.attack_boost;
@@ -136,6 +133,16 @@ namespace le_hero {
 		final_health /= 5.0f;
 		final_health *= this->level;
 		return (uint16_t)nearbyint(final_health * (1.0f - c));
+	}
+
+	uint8_t Character::get_level()
+	{
+		return this->level;
+	}
+
+	uint16_t Character::get_experience()
+	{
+		return this->total_experience;
 	}
 
 	CharacterElement Character::get_element()

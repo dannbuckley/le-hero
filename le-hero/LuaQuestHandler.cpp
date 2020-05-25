@@ -215,14 +215,13 @@ namespace le_hero {
 				if (lua_isfunction(L, -1)) {
 					if (LuaHelpers::validate_lua(L, lua_pcall(L, 0, 1, 0))) {
 						if (lua_istable(L, -1)) {
+							// construct Quest from lua table
 							q.description = LuaHelpers::get_string_value_from_table(L, "Description");
 							q.recommended_level = (uint8_t)LuaHelpers::get_number_value_from_table(L, "RecommendedLevel");
 							q.quest_terrain = (CharacterElements)LuaHelpers::get_number_value_from_table(L, "QuestTerrain");
 							q.prize_coins = (uint32_t)LuaHelpers::get_number_value_from_table(L, "PrizeCoins");
 							q.prize_experience = (uint16_t)LuaHelpers::get_number_value_from_table(L, "PrizeExp");
 
-							// NumEnemies
-							// EnemyInfo -> Element, Rank, TotalExperience, WeaponIndex, SpecialAbilityIndex
 							if (!parse_quest_enemy_info_objects(L, q)) {
 								return false;
 							}
@@ -254,7 +253,7 @@ namespace le_hero {
 		// Loads data for all quests found in game environment quest references
 		std::vector<quest::Quest> LuaQuestHandler::load_all_quests(std::shared_ptr<Game> env)
 		{
-			diagnostics::Timer t; // record the time elapsed for debugging
+			PROFILE_TIMER(); // record the time elapsed for debugging
 			auto pq = construct_quests_queue(env);
 
 			std::vector<quest::Quest> quests;

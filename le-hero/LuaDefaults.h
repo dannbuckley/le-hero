@@ -28,10 +28,10 @@ namespace le_hero {
 			}
 
 			// Retrieves string-type value of global variable var_name from lua file
-			static std::string get_global_string_variable(lua_State* L, std::string var_name)
+			static const char* get_global_string_variable(lua_State* L, const char* var_name)
 			{
 				// get global variable var_name
-				lua_getglobal(L, var_name.c_str());
+				lua_getglobal(L, var_name);
 
 				// check for valid type
 				if (!lua_isstring(L, -1)) {
@@ -41,7 +41,7 @@ namespace le_hero {
 				}
 
 				// convert value to string
-				std::string var_value = lua_tostring(L, -1);
+				auto var_value = lua_tostring(L, -1);
 
 				// pop value off lua stack
 				lua_pop(L, 1);
@@ -49,10 +49,10 @@ namespace le_hero {
 			}
 
 			// Retrieves number-type value of global variable var_name from lua file
-			static lua_Number get_global_number_variable(lua_State* L, std::string var_name)
+			static lua_Number get_global_number_variable(lua_State* L, const char* var_name)
 			{
 				// get global variable var_name
-				lua_getglobal(L, var_name.c_str());
+				lua_getglobal(L, var_name);
 
 				// check for valid type
 				if (!lua_isnumber(L, -1)) {
@@ -62,7 +62,7 @@ namespace le_hero {
 				}
 
 				// convert value to number
-				lua_Number var_value = lua_tonumber(L, -1);
+				auto var_value = lua_tonumber(L, -1);
 
 				// pop value off lua stack
 				lua_pop(L, 1);
@@ -70,10 +70,10 @@ namespace le_hero {
 			}
 
 			// Retrieves string-type value with associated key from lua table
-			static std::string get_string_value_from_table(lua_State* L, std::string key)
+			static const char* get_string_value_from_table(lua_State* L, const char* key)
 			{
 				// push key onto stack and retrieve value from table
-				lua_pushstring(L, key.c_str());
+				lua_pushstring(L, key);
 				lua_gettable(L, -2);
 
 				// check for valid type
@@ -84,7 +84,7 @@ namespace le_hero {
 				}
 
 				// convert value to string
-				std::string value = lua_tostring(L, -1);
+				auto value = lua_tostring(L, -1);
 
 				// pop value off lua stack
 				lua_pop(L, 1);
@@ -92,10 +92,10 @@ namespace le_hero {
 			}
 
 			// Retrieves number-type value with associated key from lua table
-			static lua_Number get_number_value_from_table(lua_State* L, std::string key)
+			static lua_Number get_number_value_from_table(lua_State* L, const char* key)
 			{
 				// push key onto stack and retrieve value from table
-				lua_pushstring(L, key.c_str());
+				lua_pushstring(L, key);
 				lua_gettable(L, -2);
 
 				// check for valid type
@@ -106,7 +106,7 @@ namespace le_hero {
 				}
 
 				// convert value to number
-				lua_Number value = lua_tonumber(L, -1);
+				auto value = lua_tonumber(L, -1);
 
 				// pop value off lua stack
 				lua_pop(L, 1);
@@ -114,10 +114,10 @@ namespace le_hero {
 			}
 
 			// Retrieves bool-type value with associated key from lua table
-			static bool get_bool_value_from_table(lua_State* L, std::string key)
+			static bool get_bool_value_from_table(lua_State* L, const char* key)
 			{
 				// push key onto stack and retrieve value from table
-				lua_pushstring(L, key.c_str());
+				lua_pushstring(L, key);
 				lua_gettable(L, -2);
 
 				// check for valid type

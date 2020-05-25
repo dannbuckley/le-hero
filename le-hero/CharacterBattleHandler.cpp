@@ -21,7 +21,27 @@ namespace le_hero {
         this->reset_stats(true);
     }
 
-    CharacterPassiveAbility CharacterBattleHandler::get_passive_ability()
+    std::shared_ptr<Game> CharacterBattleHandler::get_base_environment()
+    {
+        return this->base->get_environment();
+    }
+
+	uint8_t CharacterBattleHandler::get_base_level()
+	{
+		return this->base->get_level();
+	}
+
+    uint16_t CharacterBattleHandler::get_base_exp_to_next_level()
+    {
+        return this->base->calculate_exp_to_next_level();
+    }
+
+    uint16_t CharacterBattleHandler::get_base_exp()
+    {
+        return this->base->get_experience();
+    }
+
+	CharacterPassiveAbility CharacterBattleHandler::get_passive_ability()
     {
         return this->base->get_passive_ability();
     }
@@ -34,6 +54,16 @@ namespace le_hero {
     CharacterSpecialAbility CharacterBattleHandler::get_special_ability()
     {
         return this->base->get_special_ability();
+    }
+
+    void CharacterBattleHandler::base_gain_exp(uint16_t yield)
+    {
+        this->base->gain_exp(yield);
+    }
+
+    void CharacterBattleHandler::base_gain_coins(uint32_t yield)
+    {
+        this->base->gain_coins(yield)
     }
 
 	bool CharacterBattleHandler::is_ready()
@@ -116,9 +146,29 @@ namespace le_hero {
         return true;
     }
 
+    void CharacterBattleHandler::remove_armor()
+    {
+        this->armor_turns_left = 0;
+    }
+
     uint8_t CharacterBattleHandler::get_armor_turns_left()
     {
         return this->armor_turns_left;
+    }
+
+    void CharacterBattleHandler::protect_from_damage()
+    {
+        this->protected_from_damage = true;
+    }
+
+    uint16_t CharacterBattleHandler::get_base_attack_stat()
+    {
+        return this->base->calculate_attack_stat();
+    }
+
+    uint16_t CharacterBattleHandler::get_base_speed_stat()
+    {
+        return this->base->calculate_speed_stat();
     }
 
     uint16_t CharacterBattleHandler::calculate_battle_attack_stat()
@@ -207,6 +257,36 @@ namespace le_hero {
     void CharacterBattleHandler::apply_speed_modifier(float mod)
     {
         this->speed_modifier *= mod;
+    }
+
+	void CharacterBattleHandler::lock_on_pass()
+	{
+        this->locked_on_pass = true;
+	}
+
+    void CharacterBattleHandler::lock_on_weapon()
+    {
+        this->locked_on_weapon = true;
+    }
+
+    void CharacterBattleHandler::lock_on_special()
+    {
+        this->locked_on_special = true;
+    }
+
+    void CharacterBattleHandler::disable_pass()
+    {
+        this->pass_disabled = true;
+    }
+
+    void CharacterBattleHandler::disable_weapon()
+    {
+        this->weapon_disabled = true;
+    }
+
+    void CharacterBattleHandler::disable_special()
+    {
+        this->special_disabled = true;
     }
 
     void CharacterBattleHandler::end_battle()
@@ -388,5 +468,9 @@ namespace le_hero {
     void CharacterBattleHandler::register_damage_dealt(uint16_t damage)
     {
         this->damage_dealt = damage;
+    }
+    uint16_t CharacterBattleHandler::get_damage_dealt()
+    {
+        return this->damage_dealt;
     }
 }

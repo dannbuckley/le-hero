@@ -46,9 +46,17 @@ namespace le_hero {
         CharacterBattleHandler();
         CharacterBattleHandler(std::shared_ptr<Character> base);
 
+        std::shared_ptr<Game> get_base_environment();
+
+        uint8_t get_base_level();
+        uint16_t get_base_exp_to_next_level();
+        uint16_t get_base_exp();
         CharacterPassiveAbility get_passive_ability();
         CharacterWeapon get_equipped_weapon();
         CharacterSpecialAbility get_special_ability();
+
+        void base_gain_exp(uint16_t yield);
+        void base_gain_coins(uint32_t yield);
 
         bool is_ready();
         bool is_in_battle();
@@ -62,7 +70,13 @@ namespace le_hero {
         uint8_t get_status_turns_left();
 
         bool restore_armor();
+        void remove_armor();
         uint8_t get_armor_turns_left();
+
+        void protect_from_damage();
+
+        uint16_t get_base_attack_stat();
+        uint16_t get_base_speed_stat();
 
         uint16_t calculate_battle_attack_stat();
         uint16_t calculate_battle_speed_stat();
@@ -77,10 +91,20 @@ namespace le_hero {
         void apply_attack_modifier(float mod);
         void apply_speed_modifier(float mod);
 
+        void lock_on_pass();
+        void lock_on_weapon();
+        void lock_on_special();
+
+        void disable_pass();
+        void disable_weapon();
+        void disable_special();
+
+        void register_damage_dealt(uint16_t damage);
+        uint16_t get_damage_dealt();
+
         void end_battle();
         void new_turn();
         void register_battle(enum CharacterElements terrain);
-        void register_damage_dealt(uint16_t damage);
         void reset_stats(bool reset_all = false);
         void reset_turn_data();
         void select_action(enum CharacterActionTypes action);

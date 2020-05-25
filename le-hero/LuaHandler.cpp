@@ -7,6 +7,7 @@
 #include <iostream>
 #include "LuaDefaults.h"
 #include "LuaHandler.h"
+#include "Timer.h"
 
 namespace le_hero {
 	namespace lua {
@@ -431,6 +432,8 @@ namespace le_hero {
 			std::vector<CharacterSpecialAbility>& s_abil,
 			std::vector<CharacterItem>& im)
 		{
+			PROFILE_TIMER(); // record the time elapsed for debugging
+
 			L = luaL_newstate(); // initialize lua stack
 			luaL_openlibs(L); // enable lua standard libraries
 
@@ -484,6 +487,8 @@ namespace le_hero {
 		// Parses quests index file for game environment
 		bool LuaHandler::parse_quests_index_file(std::string quests_index_file, std::vector<std::pair<std::string, std::string>>& qr)
 		{
+			PROFILE_TIMER(); // record the time elapsed for debugging
+
 			L = luaL_newstate(); // initialize lua stack
 			luaL_openlibs(L); // enable lua standard libraries
 

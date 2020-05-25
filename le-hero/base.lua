@@ -54,7 +54,7 @@ statuses[9] = mk_status("Amnesiac", "The character has temporary amnesia, and ca
 statuses[10] = mk_status("Shattered Armor", "Removes the effect of armor from the character.", 1, 2)
 statuses[11] = mk_status("Unworthy", "This character is deemed unworthy by its enemy. It is damaged by 50% of its maximum health, removed of armor, and forced to pass its turn.", 1, 3)
 statuses[12] = mk_status("Protecting", "The character is protected from any damage for 1 turn.", 1, 3)
-statuses[13] = mk_status("Killing Spree", "Raises the characters attack and speed by 80% and heals for 40% of damage dealt with a weapon in the previous turn.", 0, 3)
+statuses[13] = mk_status("Frenzy", "Raises the characters attack and speed by 80% and heals for 40% of damage dealt with a weapon in the previous turn.", 0, 3)
 
 -- Define weapons
 function mk_weapon(ci, c, h, w, r, dt, n, e, str, cis, is)
@@ -179,7 +179,7 @@ special_abilities[14] = mk_special_ability("Platinum Power Play", "The user deal
 special_abilities[15] = mk_special_ability("Guard Stance", "The user guards themselves to avoid any damage.", 0, 0, 16)
 special_abilities[16] = mk_special_ability("Honor Amongst Thieves", "If the character and the enemy are of the same element, both characters will restore 10% of their health. However, if they are not of the same element, the character that uses this ability will steal 10% of the enemy's health(damage does not bypass armor).", 0, 0, 63)
 special_abilities[17] = mk_special_ability("Good Samaritan", "Heals the status of an enemy, if any.", 0, 0, 63)
-special_abilities[18] = mk_special_ability("Call To Arms", "Self-inflicts 'Killing Spree' status for a variable amount of turns. The amount of turns depends on the strength of the currently attached weapon.", 0, 0, 63)
+special_abilities[18] = mk_special_ability("Call To Arms", "Self-inflicts 'Frenzy' status for a variable amount of turns. The amount of turns depends on the strength of the currently attached weapon.", 0, 0, 63)
 
 -- Define items
 function mk_item(n, e, it, ir, ie, c, av)

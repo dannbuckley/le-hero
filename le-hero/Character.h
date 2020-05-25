@@ -53,9 +53,7 @@ namespace le_hero {
         std::vector<uint8_t> inventory;
         std::vector<bool> library;
 
-        double _calculate_correction_value(uint8_t _level);
-        uint16_t _calculate_exp_at_level(uint8_t _level);
-        uint16_t _calculate_exp_to_next_level();
+        double _calculate_correction_value(uint8_t _level);        
 
         void update_level();
 
@@ -65,10 +63,15 @@ namespace le_hero {
 
         std::shared_ptr<Game> get_environment();
 
+        static uint16_t calculate_exp_at_level(uint8_t _level);
+        uint16_t calculate_exp_to_next_level();
+
         uint16_t calculate_attack_stat();
         uint16_t calculate_speed_stat();
         uint16_t calculate_health_stat();
 
+        uint8_t get_level();
+        uint16_t get_experience();
         CharacterElement get_element();
         CharacterRank get_rank();
         CharacterPassiveAbility get_passive_ability();
