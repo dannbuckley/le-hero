@@ -5,6 +5,7 @@
 
 #include <iostream>
 #include <fstream>
+#include "SDLIncludes.h"
 #include "LuaQuestHandler.h"
 #include "CharacterBattleHandler.h"
 
@@ -12,7 +13,7 @@
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 
-int main()
+int main(int argc, char* argv[])
 {
     // make sure the log file exists
     std::ofstream log_file("log.txt");

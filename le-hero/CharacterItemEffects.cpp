@@ -10,6 +10,12 @@ namespace le_hero {
         bool activate_item_effect(uint8_t index, CharacterBattleHandler* self)
         {
             using namespace item;
+
+            switch (index) {
+            default:
+                // not a valid item
+                return false;
+            }
         }
 
         namespace item {

@@ -72,6 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(ProjectDir)\sdl2-2_0_12\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -149,6 +150,10 @@
   <ItemGroup>
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterBattleHandler.cpp" />
+    <ClCompile Include="CharacterItemEffects.cpp" />
+    <ClCompile Include="CharacterPassiveAbilityEffects.cpp" />
+    <ClCompile Include="CharacterSpecialAbilityEffects.cpp" />
+    <ClCompile Include="CharacterStatusEffects.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="le-hero.cpp" />
     <ClCompile Include="LuaHandler.cpp" />
@@ -158,13 +163,18 @@
   <ItemGroup>
     <ClInclude Include="Character.h" />
     <ClInclude Include="CharacterBattleHandler.h" />
+    <ClInclude Include="CharacterEffectFunctions.h" />
     <ClInclude Include="CharacterElement.h" />
     <ClInclude Include="CharacterForgableItem.h" />
     <ClInclude Include="CharacterItem.h" />
+    <ClInclude Include="CharacterItemEffects.h" />
     <ClInclude Include="CharacterPassiveAbility.h" />
+    <ClInclude Include="CharacterPassiveAbilityEffects.h" />
     <ClInclude Include="CharacterRank.h" />
     <ClInclude Include="CharacterSpecialAbility.h" />
+    <ClInclude Include="CharacterSpecialAbilityEffects.h" />
     <ClInclude Include="CharacterStatus.h" />
+    <ClInclude Include="CharacterStatusEffects.h" />
     <ClInclude Include="CharacterWeapon.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameExceptions.h" />
@@ -174,6 +184,7 @@
     <ClInclude Include="LuaQuestHandler.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestHandler.h" />
+    <ClInclude Include="SDLIncludes.h" />
     <ClInclude Include="StateHandler.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

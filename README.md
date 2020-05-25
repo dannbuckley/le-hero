@@ -6,4 +6,5 @@
  ## Dependencies
  
  * [Lua 5.3.5](https://www.lua.org/download.html)
+ * [SDL 2.0.12](https://www.libsdl.org/download-2.0.php)
  * [spdlog](https://github.com/gabime/spdlog) (via vcpkg)
