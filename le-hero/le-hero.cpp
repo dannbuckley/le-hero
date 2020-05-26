@@ -5,13 +5,14 @@
 
 #include <iostream>
 #include <fstream>
-#include "SDLIncludes.h"
+#include "Renderer.h"
 #include "LuaQuestHandler.h"
 #include "CharacterBattleHandler.h"
 
 // gabime/spdlog, installed via vcpkg
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/stdout_color_sinks.h"
 
 int main(int argc, char* argv[])
 {
@@ -23,6 +24,7 @@ int main(int argc, char* argv[])
     // use log file for spdlog
     try {
         auto logger = spdlog::basic_logger_mt("logger", "log.txt");
+        auto graphics_logger = spdlog::stdout_color_mt("graphics_logger");
     }
     catch (const spdlog::spdlog_ex &ex) {
         std::cout << "Logger initialization failed: " << ex.what() << std::endl;
@@ -65,6 +67,40 @@ int main(int argc, char* argv[])
     game->act(le_hero::state::StateActions::FINISH_PARSING_QUEST_FILES);
 
     spdlog::get("logger")->info("Quest data parsed successfully.");
+
+    // create SDL renderer object with default window size
+    le_hero::graphics::Renderer r;
+
+    // check if SDL has been initialized
+    if (!r.is_initialized()) {
+        // SDL initialization process failed at some point
+        return EXIT_FAILURE;
+    }
+
+    // load test 640x480 loading screen
+    if (!r.load_image()) {
+        // unable to load image
+        return EXIT_FAILURE;
+    }
+
+    // main display loop
+    bool active = true;
+    SDL_Event e;
+
+    while (active) {
+        // handle SDL events
+        while (SDL_PollEvent(&e) != 0) {
+            if (e.type == SDL_QUIT) {
+                active = false;
+            }
+        }
+
+        // update display
+        r.apply_image();
+    }
+
+    // free SDL resources
+    r.quit();
 
     return EXIT_SUCCESS;
 }

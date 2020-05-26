@@ -93,25 +93,26 @@ namespace le_hero {
         namespace item {
             bool CharacterItemEffects::exp_spell_item_effect(CharacterBattleHandler* self, enum CharacterItemRank item_rank)
             {
-                uint16_t raise_exp = 0;
+                uint16_t raise_exp = 0, level_exp_diff = 0, cur_exp = 0;
+                uint8_t cur_level = 0;
 
                 switch (item_rank) {
                 case CharacterItemRank::ITEM_RANK_1:
-                    uint8_t cur_level = self->get_base_level();
-                    uint16_t level_exp_diff = Character::calculate_exp_at_level(cur_level + 1) - Character::calculate_exp_at_level(cur_level);
+                    cur_level = self->get_base_level();
+                    level_exp_diff = Character::calculate_exp_at_level(cur_level + 1) - Character::calculate_exp_at_level(cur_level);
                     raise_exp = (uint16_t)floorf(level_exp_diff * 0.5f);
                     break;
                 case CharacterItemRank::ITEM_RANK_2:
                     raise_exp = self->get_base_exp_to_next_level();
                     break;
                 case CharacterItemRank::ITEM_RANK_3:
-                    uint8_t cur_level = self->get_base_level();
-                    uint16_t cur_exp = self->get_base_exp();
+                    cur_level = self->get_base_level();
+                    cur_exp = self->get_base_exp();
                     raise_exp = Character::calculate_exp_at_level(cur_level + 2) - cur_exp;
                     break;
                 case CharacterItemRank::ITEM_RANK_A:
-                    uint8_t cur_level = self->get_base_level();
-                    uint16_t cur_exp = self->get_base_exp();
+                    cur_level = self->get_base_level();
+                    cur_exp = self->get_base_exp();
                     raise_exp = Character::calculate_exp_at_level(cur_level + 5) - cur_exp;
                     break;
                 default:
@@ -129,25 +130,26 @@ namespace le_hero {
                     return exp_spell_item_effect(self, item_rank);
                 }
 
-                uint16_t raise_exp = 0;
+                uint16_t raise_exp = 0, cur_exp = 0;
+                uint8_t cur_level = 0;
 
                 switch (item_rank) {
                 case CharacterItemRank::ITEM_RANK_1:
                     raise_exp = self->get_base_exp_to_next_level();
                     break;
                 case CharacterItemRank::ITEM_RANK_2:
-                    uint8_t cur_level = self->get_base_level();
-                    uint16_t cur_exp = self->get_base_exp();
+                    cur_level = self->get_base_level();
+                    cur_exp = self->get_base_exp();
                     raise_exp = Character::calculate_exp_at_level(cur_level + 2) - cur_exp;
                     break;
                 case CharacterItemRank::ITEM_RANK_3:
-                    uint8_t cur_level = self->get_base_level();
-                    uint16_t cur_exp = self->get_base_exp();
+                    cur_level = self->get_base_level();
+                    cur_exp = self->get_base_exp();
                     raise_exp = Character::calculate_exp_at_level(cur_level + 5) - cur_exp;
                     break;
                 case CharacterItemRank::ITEM_RANK_A:
-                    uint8_t cur_level = self->get_base_level();
-                    uint16_t cur_exp = self->get_base_exp();
+                    cur_level = self->get_base_level();
+                    cur_exp = self->get_base_exp();
                     raise_exp = Character::calculate_exp_at_level(cur_level + 10) - cur_exp;
                     break;
                 default:
@@ -186,19 +188,19 @@ namespace le_hero {
 
             bool CharacterItemEffects::healing_spell_item_effect(CharacterBattleHandler* self, enum CharacterItemRank item_rank)
             {
-                uint16_t heal_val = 0;
+                uint16_t heal_val = 0, max_health = 0;
 
                 switch (item_rank) {
                 case CharacterItemRank::ITEM_RANK_1:
-                    uint16_t max_health = self->get_maximum_health();
+                    max_health = self->get_maximum_health();
                     heal_val = std::max((uint16_t)floorf(max_health * 0.2f), (uint16_t)1);
                     break;
                 case CharacterItemRank::ITEM_RANK_2:
-                    uint16_t max_health = self->get_maximum_health();
+                    max_health = self->get_maximum_health();
                     heal_val = std::max((uint16_t)floorf(max_health * 0.4f), (uint16_t)1);
                     break;
                 case CharacterItemRank::ITEM_RANK_3:
-                    uint16_t max_health = self->get_maximum_health();
+                    max_health = self->get_maximum_health();
                     heal_val = std::max((uint16_t)floorf(max_health * 0.8f), (uint16_t)1);
                     break;
                 case CharacterItemRank::ITEM_RANK_A:

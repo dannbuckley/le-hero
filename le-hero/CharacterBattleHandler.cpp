@@ -63,7 +63,7 @@ namespace le_hero {
 
     void CharacterBattleHandler::base_gain_coins(uint32_t yield)
     {
-        this->base->gain_coins(yield)
+        this->base->gain_coins(yield);
     }
 
 	bool CharacterBattleHandler::is_ready()
