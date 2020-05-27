@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\sdl2-2_0_12\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(ProjectDir)\glew-2_1_0\include;$(ProjectDir)\sdl2-2_0_12\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -186,7 +186,7 @@
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestHandler.h" />
     <ClInclude Include="Renderer.h" />
-    <ClInclude Include="SDLIncludes.h" />
+    <ClInclude Include="GraphicsIncludes.h" />
     <ClInclude Include="StateHandler.h" />
     <ClInclude Include="Timer.h" />
   </ItemGroup>

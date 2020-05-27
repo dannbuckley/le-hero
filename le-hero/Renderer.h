@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "SDLIncludes.h"
+#include "GraphicsIncludes.h"
 
 namespace le_hero {
     namespace graphics {
@@ -17,8 +17,12 @@ namespace le_hero {
             SDL_Window* game_window = NULL;
             SDL_Surface* game_screen_surface = NULL;
             SDL_Surface* game_png_surface = NULL;
+            SDL_GLContext gl_context = NULL;
+            GLuint txID = 0;
 
             SDL_Surface* load_surface(const char* path);
+            bool initialize_gl();
+            void apply_png();
 
         public:
             Renderer(int w = 640, int h = 480);
@@ -27,7 +31,7 @@ namespace le_hero {
 
             bool start_window();
             bool load_image();
-            void apply_image();
+            void render();
             void quit();
         };
     }

@@ -71,15 +71,9 @@ int main(int argc, char* argv[])
     // create SDL renderer object with default window size
     le_hero::graphics::Renderer r;
 
-    // check if SDL has been initialized
+    // check if renderer has been initialized
     if (!r.is_initialized()) {
         // SDL initialization process failed at some point
-        return EXIT_FAILURE;
-    }
-
-    // load test 640x480 loading screen
-    if (!r.load_image()) {
-        // unable to load image
         return EXIT_FAILURE;
     }
 
@@ -96,7 +90,7 @@ int main(int argc, char* argv[])
         }
 
         // update display
-        r.apply_image();
+        r.render();
     }
 
     // free SDL resources

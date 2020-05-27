@@ -5,6 +5,7 @@
  
  ## Dependencies
  
+ * [GLEW 2.1.0](http://glew.sourceforge.net/)
  * [Lua 5.3.5](https://www.lua.org/download.html)
  * [SDL 2.0.12](https://www.libsdl.org/download-2.0.php)
  * [SDL_image 2.0.5](https://www.libsdl.org/projects/SDL_image/)
