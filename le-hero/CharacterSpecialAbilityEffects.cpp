@@ -253,8 +253,7 @@ namespace le_hero {
             bool CharacterSpecialAbilityEffects::call_to_arms_special_effect(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy)
             {
                 // get data for Frenzy status
-                auto env = self->get_base_environment();
-                auto frenzy_data = env->get_status(13);
+                auto frenzy_data = game::get_status(13);
 
                 // calculate status effect length
                 uint8_t length = (uint8_t)ceilf((self->get_equipped_weapon().strength / 100.0f) + 1.0f);

@@ -46,14 +46,12 @@ namespace le_hero {
         CharacterBattleHandler();
         CharacterBattleHandler(std::shared_ptr<Character> base);
 
-        std::shared_ptr<Game> get_base_environment();
-
         uint8_t get_base_level();
         uint16_t get_base_exp_to_next_level();
         uint16_t get_base_exp();
-        CharacterPassiveAbility get_passive_ability();
-        CharacterWeapon get_equipped_weapon();
-        CharacterSpecialAbility get_special_ability();
+        const CharacterPassiveAbility& get_passive_ability() const;
+        const CharacterWeapon& get_equipped_weapon() const;
+        const CharacterSpecialAbility& get_special_ability() const;
 
         void base_gain_exp(uint16_t yield);
         void base_gain_coins(uint32_t yield);

@@ -30,21 +30,21 @@ namespace le_hero {
 		// Constructs a priority queue from all quest data with the quest index acting as the item priority
 		std::priority_queue<LuaQuestHandler::QuestInfo,
 			std::vector<LuaQuestHandler::QuestInfo>,
-			LuaQuestHandler::QuestInfoCmp> LuaQuestHandler::construct_quests_queue(std::shared_ptr<le_hero::Game> env)
+			LuaQuestHandler::QuestInfoCmp> LuaQuestHandler::construct_quests_queue()
 		{
 			std::priority_queue<LuaQuestHandler::QuestInfo,
 				std::vector<LuaQuestHandler::QuestInfo>,
 				LuaQuestHandler::QuestInfoCmp> pq;
 			std::vector<std::future<void>> quest_futures;
-			auto num_quests = env->get_num_quest_refs();
+			auto num_quests = game::get_num_quest_refs();
 
 			for (unsigned int i = 0; i < num_quests; i++) {
-				const auto& q_ref = env->get_quest_ref(i);
+				const auto& q_ref = game::get_quest_ref(i);
 				quest_futures.push_back(std::async(std::launch::async, load_individual_quest, &pq, q_ref, i));
 			}
 
 			// wait for all quests to finish loading
-			while (pq.size() != env->get_num_quest_refs());
+			while (pq.size() != game::get_num_quest_refs());
 
 			return pq;
 		}
@@ -251,10 +251,10 @@ namespace le_hero {
         }
 
 		// Loads data for all quests found in game environment quest references
-		std::vector<quest::Quest> LuaQuestHandler::load_all_quests(std::shared_ptr<Game> env)
+		std::vector<quest::Quest> LuaQuestHandler::load_all_quests()
 		{
 			PROFILE_TIMER(); // record the time elapsed for debugging
-			auto pq = construct_quests_queue(env);
+			auto pq = construct_quests_queue();
 
 			std::vector<quest::Quest> quests;
 			quests.reserve(pq.size());

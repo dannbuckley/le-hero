@@ -21,11 +21,6 @@ namespace le_hero {
         this->reset_stats(true);
     }
 
-    std::shared_ptr<Game> CharacterBattleHandler::get_base_environment()
-    {
-        return this->base->get_environment();
-    }
-
 	uint8_t CharacterBattleHandler::get_base_level()
 	{
 		return this->base->get_level();
@@ -41,17 +36,17 @@ namespace le_hero {
         return this->base->get_experience();
     }
 
-	CharacterPassiveAbility CharacterBattleHandler::get_passive_ability()
+	const CharacterPassiveAbility& CharacterBattleHandler::get_passive_ability() const
     {
         return this->base->get_passive_ability();
     }
 
-    CharacterWeapon CharacterBattleHandler::get_equipped_weapon()
+    const CharacterWeapon& CharacterBattleHandler::get_equipped_weapon() const
     {
         return this->base->get_equipped_weapon();
     }
 
-    CharacterSpecialAbility CharacterBattleHandler::get_special_ability()
+    const CharacterSpecialAbility& CharacterBattleHandler::get_special_ability() const
     {
         return this->base->get_special_ability();
     }
@@ -115,8 +110,7 @@ namespace le_hero {
         }
 
         // get status data from game environment
-        auto env = this->base->get_environment();
-        auto new_status_data = env->get_status(new_status);
+        auto new_status_data = game::get_status(new_status);
 
         // inflict the Character with the provided status
         this->inflicted_status = new_status_data;

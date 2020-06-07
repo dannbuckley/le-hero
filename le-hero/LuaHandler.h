@@ -43,7 +43,7 @@ namespace le_hero {
 			LuaHandler();
 
 			// Parser for base.lua
-			bool parse_settings_file(std::string file_name,
+			bool parse_settings_file(const char* file_name,
 				std::string& quests_index_file,
 				std::vector<CharacterElement>& e,
 				std::vector<CharacterRank>& r,

@@ -26,7 +26,7 @@ namespace le_hero {
                 this->current_enemy_info = QuestEnemyInfo{ this->num_enemies_defeated, this->base->enemy_info[this->num_enemies_defeated] };
 
                 // TODO: test this method of constructing next enemy Battle Handler
-                std::shared_ptr<Character> enemy_base = std::make_shared<Character>(this->env, this->current_enemy_info.enemy_meta);
+                std::shared_ptr<Character> enemy_base = std::make_shared<Character>(this->current_enemy_info.enemy_meta);
                 this->current_enemy = std::make_shared<CharacterBattleHandler>(enemy_base);
                 this->current_enemy->register_battle(this->base->quest_terrain);
             }
@@ -34,21 +34,21 @@ namespace le_hero {
 
         void QuestHandler::enemy_defeated()
         {
-            this->env->act(state::StateActions::QUEST_FINISH_PERFORM_ACTIONS);
+            game::game_act(StateActions::QUEST_FINISH_PERFORM_ACTIONS);
 
             ++this->num_enemies_defeated;
             this->setup_enemy();
 
             if (!this->quest_completed) {
                 this->player->new_turn();
-                this->env->act(state::StateActions::QUEST_START_TURN);
+                game::game_act(StateActions::QUEST_START_TURN);
             }
         }
 
         void QuestHandler::player_defeated()
         {
             // "You lose!"
-            this->env->act(state::StateActions::QUEST_FINISH_PERFORM_ACTIONS);
+            game::game_act(StateActions::QUEST_FINISH_PERFORM_ACTIONS);
             this->end_quest(true);
         }
 
@@ -103,10 +103,7 @@ namespace le_hero {
             return result;
         }
 
-        QuestHandler::QuestHandler(std::shared_ptr<Game> env,
-            std::shared_ptr<Quest> base,
-            std::shared_ptr<CharacterBattleHandler> player):
-            env(env), 
+        QuestHandler::QuestHandler(std::shared_ptr<Quest> base, std::shared_ptr<CharacterBattleHandler> player):
             base(base), 
             player(player)
         {
@@ -114,12 +111,12 @@ namespace le_hero {
 
         bool QuestHandler::perform_turn()
         {
-            if (this->env->get_current_state() != state::StateTypes::QUEST_READY_FOR_TURN) {
+            if (game::get_current_state() != StateTypes::QUEST_READY_FOR_TURN) {
                 // cannot perform the turn until both Characters are ready
                 return false;
             }
 
-            this->env->act(state::StateActions::QUEST_START_PERFORM_ACTIONS);
+            game::game_act(StateActions::QUEST_START_PERFORM_ACTIONS);
 
             // activate passive abilities
             effect::activate_passive_ability_effect(this->player);
@@ -161,19 +158,19 @@ namespace le_hero {
                 }
             }
 
-            this->env->act(state::StateActions::QUEST_FINISH_PERFORM_ACTIONS);
+            game::game_act(StateActions::QUEST_FINISH_PERFORM_ACTIONS);
 
             this->player->new_turn();
             this->current_enemy->new_turn();
 
-            this->env->act(state::StateActions::QUEST_START_TURN);
+            game::game_act(StateActions::QUEST_START_TURN);
 
             return true;
         }
 
         void QuestHandler::start_quest()
         {
-            this->env->act(state::StateActions::START_QUEST);
+            game::game_act(StateActions::START_QUEST);
             this->player->register_battle(this->base->quest_terrain);
             this->setup_enemy();
         }
@@ -186,7 +183,7 @@ namespace le_hero {
             }
 
             this->player->end_battle();
-            this->env->act(state::StateActions::END_QUEST);
+            game::game_act(StateActions::END_QUEST);
         }
     }
 }

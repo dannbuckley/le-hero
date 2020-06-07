@@ -5,68 +5,29 @@
 
 #pragma once
 
-#include <stack>
 #include "LuaHandler.h"
 #include "StateHandler.h"
 
 namespace le_hero {
-	class Game : public state::StateHandler
-	{
-	private:
-		std::unique_ptr<lua::LuaHandler> lua_handler;
-		std::unique_ptr<std::stack<enum state::StateTypes>> state_handler;
+	using namespace state;
+	namespace game {
+		extern void initialize_game_environment(const char* settings_file);
+		extern bool game_act(enum StateActions action);
+		extern enum StateTypes get_current_state();
 
-		/* Game Data */
+		extern const CharacterElement& get_element(uint8_t index);
+		extern const CharacterRank& get_rank(uint8_t index);
+		extern const CharacterStatus& get_status(uint8_t index);
+		extern const CharacterWeapon& get_weapon(uint8_t index);
+		extern const CharacterPassiveAbility& get_passive_ability(uint8_t index);
+		extern const CharacterSpecialAbility& get_special_ability(uint8_t index);
+		extern const CharacterItem& get_item(uint8_t index);
+		extern const std::pair<std::string, std::string>& get_quest_ref(uint8_t index);
 
-		std::vector<CharacterElement> elements;
-		std::vector<CharacterRank> ranks;
-		std::vector<CharacterStatus> statuses;
-		std::vector<CharacterWeapon> weapons;
-		std::vector<CharacterPassiveAbility> passive_abilities;
-		std::vector<CharacterSpecialAbility> special_abilities;
-		std::vector<CharacterItem> items;
-
-		/* Quest Data */
-
-		std::vector<std::pair<std::string, std::string>> quest_references;
-
-		/* Debug Variables */
-
-		std::vector<enum state::StateTypes> state_history;
-		std::vector<enum state::StateActions> action_history;
-
-		/* State Action Handlers */
-
-		bool act_in_stateless(enum state::StateActions action);
-		bool act_in_initializing(enum state::StateActions action);
-		bool act_in_parsing(enum state::StateActions action);
-		bool act_in_quest(enum state::StateActions action);
-		bool act_in_menu(enum state::StateActions action);
-
-	protected:
-		bool enter_state(enum state::StateTypes new_state);
-		bool exit_current_state();
-
-	public:
-		Game(std::string settings_file);
-
-		CharacterElement get_element(uint8_t index);
-		CharacterRank get_rank(uint8_t index);
-		CharacterStatus get_status(uint8_t index);
-		CharacterWeapon get_weapon(uint8_t index);
-		CharacterPassiveAbility get_passive_ability(uint8_t index);
-		CharacterSpecialAbility get_special_ability(uint8_t index);
-		CharacterItem get_item(uint8_t index);
-
-		size_t get_num_statuses();
-		size_t get_num_weapons();
-		size_t get_num_special_abilities();
-		size_t get_num_items();
-
-		size_t get_num_quest_refs();
-		std::pair<std::string, std::string> get_quest_ref(uint8_t index);
-
-		bool act(enum state::StateActions action);
-		enum state::StateTypes get_current_state();
-	};
+		extern const size_t get_num_statuses();
+		extern const size_t get_num_weapons();
+		extern const size_t get_num_special_abilities();
+		extern const size_t get_num_items();
+		extern const size_t get_num_quest_refs();
+	}
 }

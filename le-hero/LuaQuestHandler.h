@@ -33,7 +33,7 @@ namespace le_hero {
 				std::pair<std::string, std::string> quest_ref,
 				uint8_t index);
 
-			std::priority_queue<QuestInfo, std::vector<QuestInfo>, QuestInfoCmp> construct_quests_queue(std::shared_ptr<Game> env);
+			std::priority_queue<QuestInfo, std::vector<QuestInfo>, QuestInfoCmp> construct_quests_queue();
 
 			bool parse_quest_enemy_info_objects(lua_State* L, quest::Quest& q);
 			bool parse_quest_prize_items(lua_State* L, quest::Quest& q);
@@ -43,7 +43,7 @@ namespace le_hero {
 			bool parse_quest_file(std::string quest_file, quest::Quest& q);
 
 		public:
-			std::vector<quest::Quest> load_all_quests(std::shared_ptr<Game> env);
+			std::vector<quest::Quest> load_all_quests();
 		};
 	}
 }

@@ -37,8 +37,6 @@ namespace le_hero {
         const uint8_t LEVEL_MAX = 250U;
         const uint8_t ITEM_AMOUNT_MAX = 100U;
 
-        std::shared_ptr<Game> env;
-
         CharacterSpecialAbility acquired_ability;
         uint32_t coins = 0;
         CharacterElement element;
@@ -58,10 +56,8 @@ namespace le_hero {
         void update_level();
 
     public:
-        Character(std::shared_ptr<Game> game_env);
-        Character(std::shared_ptr<Game> game_env, CharacterMeta meta);
-
-        std::shared_ptr<Game> get_environment();
+        Character();
+        Character(CharacterMeta meta);
 
         static uint16_t calculate_exp_at_level(uint8_t _level);
         uint16_t calculate_exp_to_next_level();
@@ -72,11 +68,11 @@ namespace le_hero {
 
         uint8_t get_level();
         uint16_t get_experience();
-        CharacterElement get_element();
-        CharacterRank get_rank();
-        CharacterPassiveAbility get_passive_ability();
-        CharacterWeapon get_equipped_weapon();
-        CharacterSpecialAbility get_special_ability();
+        const CharacterElement& get_element() const;
+        const CharacterRank& get_rank() const;
+        const CharacterPassiveAbility& get_passive_ability() const;
+        const CharacterWeapon& get_equipped_weapon() const;
+        const CharacterSpecialAbility& get_special_ability() const;
 
         void gain_coins(uint32_t coin_yield);
         void gain_exp(uint16_t exp_yield);

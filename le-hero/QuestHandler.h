@@ -13,7 +13,6 @@ namespace le_hero {
 		class QuestHandler
 		{
 		private:
-			std::shared_ptr<Game> env;
 			std::shared_ptr<Quest> base;
 
 			QuestEnemyInfo current_enemy_info;
@@ -36,9 +35,7 @@ namespace le_hero {
 			bool perform_action(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy);
 
 		public:
-			QuestHandler(std::shared_ptr<Game> env,
-				std::shared_ptr<Quest> base,
-				std::shared_ptr<CharacterBattleHandler> player);
+			QuestHandler(std::shared_ptr<Quest> base, std::shared_ptr<CharacterBattleHandler> player);
 
 			bool perform_turn();
 

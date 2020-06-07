@@ -48,27 +48,27 @@ namespace le_hero {
 		}
 	}
 
-	Character::Character(std::shared_ptr<Game> game_env): env(game_env)
+	Character::Character()
 	{
 		// initialize Weapons Vault, Inventory, and Special Ability Library
-		this->vault = std::vector<bool>(env->get_num_weapons());
-		this->inventory = std::vector<uint8_t>(env->get_num_items());
-		this->library = std::vector<bool>(env->get_num_special_abilities());
+		this->vault = std::vector<bool>(game::get_num_weapons());
+		this->inventory = std::vector<uint8_t>(game::get_num_items());
+		this->library = std::vector<bool>(game::get_num_special_abilities());
 
 		// initialize level to 1
 		this->update_level();
 	}
 
-	Character::Character(std::shared_ptr<Game> game_env, CharacterMeta meta) : env(game_env)
+	Character::Character(CharacterMeta meta)
 	{
 		// transfer meta to Character data
-		this->element = this->env->get_element((uint8_t)meta.element);
-		this->passive_ability = this->env->get_passive_ability((uint8_t)meta.element);
-		this->rank = this->env->get_rank((uint8_t)meta.rank);
+		this->element = game::get_element((uint8_t)meta.element);
+		this->passive_ability = game::get_passive_ability((uint8_t)meta.element);
+		this->rank = game::get_rank((uint8_t)meta.rank);
 		this->total_experience = meta.total_experience;
 		this->available_experience = meta.available_experience;
-		this->weapon = this->env->get_weapon(meta.weapon_index);
-		this->acquired_ability = this->env->get_special_ability(meta.special_ability_index);
+		this->weapon = game::get_weapon(meta.weapon_index);
+		this->acquired_ability = game::get_special_ability(meta.special_ability_index);
 		this->coins = meta.coins;
 		this->vault = meta.vault;
 		this->inventory = meta.inventory;
@@ -76,11 +76,6 @@ namespace le_hero {
 
 		// update level
 		this->update_level();
-	}
-
-	std::shared_ptr<Game> Character::get_environment()
-	{
-		return this->env;
 	}
 
 	uint16_t Character::calculate_exp_at_level(uint8_t _level)
@@ -145,27 +140,27 @@ namespace le_hero {
 		return this->total_experience;
 	}
 
-	CharacterElement Character::get_element()
+	const CharacterElement& Character::get_element() const
 	{
 		return this->element;
 	}
 
-	CharacterRank Character::get_rank()
+	const CharacterRank& Character::get_rank() const
 	{
 		return this->rank;
 	}
 
-	CharacterPassiveAbility Character::get_passive_ability()
+	const CharacterPassiveAbility& Character::get_passive_ability() const
 	{
 		return this->passive_ability;
 	}
 
-	CharacterWeapon Character::get_equipped_weapon()
+	const CharacterWeapon& Character::get_equipped_weapon() const
 	{
 		return this->weapon;
 	}
 
-	CharacterSpecialAbility Character::get_special_ability()
+	const CharacterSpecialAbility& Character::get_special_ability() const
 	{
 		return this->acquired_ability;
 	}
@@ -209,7 +204,7 @@ namespace le_hero {
 	bool Character::change_special_ability(uint8_t new_spec_abil)
 	{
 		// retrieve Special Ability data from game environment
-		CharacterSpecialAbility new_special = env->get_special_ability(new_spec_abil);
+		CharacterSpecialAbility new_special = game::get_special_ability(new_spec_abil);
 
 		// check if the Character knows the Special Ability and meets its requirements
 		if (this->verify_special_ability_requirements(new_special.requirements) && this->library[new_spec_abil]) {
@@ -228,7 +223,7 @@ namespace le_hero {
 		}
 
 		// retrieve Special Ability data from game environment
-		CharacterSpecialAbility new_special = env->get_special_ability(new_spec_abil);
+		CharacterSpecialAbility new_special = game::get_special_ability(new_spec_abil);
 
 		// check if the Character has enough available experience to learn the new Special Ability
 		if (new_special.cost_to_learn <= this->available_experience) {
@@ -389,7 +384,7 @@ namespace le_hero {
 		}
 
 		// change the equipped weapon to the weapon associated with weapon_index
-		this->weapon = this->env->get_weapon(weapon_index);
+		this->weapon = game::get_weapon(weapon_index);
 
 		return true;
 	}

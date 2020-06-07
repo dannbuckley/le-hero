@@ -438,7 +438,7 @@ namespace le_hero {
 		}
 
 		// Parses settings file for game environment
-		bool LuaHandler::parse_settings_file(std::string file_name,
+		bool LuaHandler::parse_settings_file(const char* file_name,
 			std::string& quests_index_file,
 			std::vector<CharacterElement>& e, 
 			std::vector<CharacterRank>& r, 
@@ -454,7 +454,7 @@ namespace le_hero {
 			luaL_openlibs(L); // enable lua standard libraries
 
 			// ensure integrity of settings file
-			if (!LuaHelpers::validate_lua(L, luaL_dofile(L, file_name.c_str()))) {
+			if (!LuaHelpers::validate_lua(L, luaL_dofile(L, file_name))) {
 				return false;
 			}
 
