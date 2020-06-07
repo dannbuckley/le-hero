@@ -14,8 +14,10 @@ namespace le_hero {
 		// Parses each Element object found in settings file
 		bool LuaHandler::parse_elements(std::vector<CharacterElement>& e)
 		{
+			e.reserve((size_t)CharacterElements::ALPHA + 1);
+
 			// use lua GetElement function to retrieve each individual Element object
-			for (int i = 0; i <= (int)CharacterElements::ALPHA; i++) {
+			for (unsigned int i = 0; i <= (unsigned int)CharacterElements::ALPHA; i++) {
 				lua_getglobal(L, "GetElement");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -57,8 +59,10 @@ namespace le_hero {
 		// Parses each Rank object found in settings file
 		bool LuaHandler::parse_ranks(std::vector<CharacterRank>& r)
 		{
+			r.reserve((size_t)CharacterRanks::Z + 1);
+
 			// use lua GetRank function to retrieve each individual Rank object
-			for (int i = 0; i <= (int)CharacterRanks::Z; i++) {
+			for (unsigned int i = 0; i <= (unsigned int)CharacterRanks::Z; i++) {
 				lua_getglobal(L, "GetRank");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -98,17 +102,19 @@ namespace le_hero {
 		bool LuaHandler::parse_statuses(std::vector<CharacterStatus>& s)
 		{
 			// get number of Statuses from global lua variable
-			int num_statuses = 0;
+			size_t num_statuses = 0;
 			try {
-				num_statuses = (int)LuaHelpers::get_global_number_variable(L, "num_statuses");
+				num_statuses = (size_t)LuaHelpers::get_global_number_variable(L, "num_statuses");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
 
+			s.reserve(num_statuses);
+
 			// use lua GetStatus function to retrieve each individual Status object
-			for (int i = 0; i < num_statuses; i++) {
+			for (unsigned int i = 0; i < num_statuses; i++) {
 				lua_getglobal(L, "GetStatus");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -149,17 +155,19 @@ namespace le_hero {
 		bool LuaHandler::parse_weapons(std::vector<CharacterWeapon>& w)
 		{
 			// get number of Weapons from global lua variable
-			int num_weapons = 0;
+			size_t num_weapons = 0;
 			try {
-				num_weapons = (int)LuaHelpers::get_global_number_variable(L, "num_weapons");
+				num_weapons = (size_t)LuaHelpers::get_global_number_variable(L, "num_weapons");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
 
+			w.reserve(num_weapons);
+
 			// use lua GetWeapon function to retrieve each individual Weapon object
-			for (int i = 0; i < num_weapons; i++) {
+			for (unsigned int i = 0; i < num_weapons; i++) {
 				lua_getglobal(L, "GetWeapon");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -211,8 +219,10 @@ namespace le_hero {
 		// Parses each Passive Ability object found in settings file
 		bool LuaHandler::parse_passive_abilities(std::vector<CharacterPassiveAbility>& p_abil)
 		{
+			p_abil.reserve((size_t)CharacterElements::ALPHA + 1);
+
 			// use lua GetPassiveAbility function to retrieve each individual Passive Ability object
-			for (int i = 0; i <= (int)CharacterElements::ALPHA; i++) {
+			for (unsigned int i = 0; i <= (unsigned int)CharacterElements::ALPHA; i++) {
 				lua_getglobal(L, "GetPassiveAbility");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -251,17 +261,19 @@ namespace le_hero {
 		bool LuaHandler::parse_special_abilities(std::vector<CharacterSpecialAbility>& s_abil)
 		{
 			// get number of Special Abilities from global lua variable
-			int num_special_abilities = 0;
+			size_t num_special_abilities = 0;
 			try {
-				num_special_abilities = (int)LuaHelpers::get_global_number_variable(L, "num_special_abilities");
+				num_special_abilities = (size_t)LuaHelpers::get_global_number_variable(L, "num_special_abilities");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
 
+			s_abil.reserve(num_special_abilities);
+
 			// use lua GetSpecialAbility function to retrieve each individual Special Ability object
-			for (int i = 0; i < num_special_abilities; i++) {
+			for (unsigned int i = 0; i < num_special_abilities; i++) {
 				lua_getglobal(L, "GetSpecialAbility");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -317,17 +329,19 @@ namespace le_hero {
 		bool LuaHandler::parse_items(std::vector<CharacterItem>& im)
 		{
 			// get number of Items from global lua variable
-			int num_items = 0;
+			size_t num_items = 0;
 			try {
-				num_items = (int)LuaHelpers::get_global_number_variable(L, "num_items");
+				num_items = (size_t)LuaHelpers::get_global_number_variable(L, "num_items");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
 
+			im.reserve(num_items);
+
 			// use lua GetSpecialAbility function to retrieve each individual Item object
-			for (int i = 0; i < num_items; i++) {
+			for (unsigned int i = 0; i < num_items; i++) {
 				lua_getglobal(L, "GetItem");
 				if (lua_isfunction(L, -1)) {
 					// push object index number onto lua stack
@@ -370,17 +384,19 @@ namespace le_hero {
 		bool LuaHandler::parse_quest_references(std::vector<std::pair<std::string, std::string>>& qr)
 		{
 			// get number of Quest references from global lua variable
-			int num_quests = 0;
+			size_t num_quests = 0;
 			try {
-				num_quests = (int)LuaHelpers::get_global_number_variable(L, "num_quests");
+				num_quests = (size_t)LuaHelpers::get_global_number_variable(L, "num_quests");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
 				return false;
 			}
 
+			qr.reserve(num_quests);
+
 			// use lua GetQuestRef function to retrieve each individual Quest reference
-			for (int i = 0; i < num_quests; i++) {
+			for (unsigned int i = 0; i < num_quests; i++) {
 				lua_getglobal(L, "GetQuestRef");
 				if (lua_isfunction(L, -1)) {
 					// push reference index number onto lua stack

@@ -9,7 +9,7 @@
 #include <memory>
 #include <utility>
 #include <vector>
-#include "LuaIncludes.h"
+#include <lua.hpp>
 #include "CharacterElement.h"
 #include "CharacterItem.h"
 #include "CharacterPassiveAbility.h"

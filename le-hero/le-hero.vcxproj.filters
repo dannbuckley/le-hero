@@ -104,9 +104,6 @@
     <ClInclude Include="LuaQuestHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="LuaIncludes.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LuaDefaults.h">
       <Filter>Header Files</Filter>
     </ClInclude>

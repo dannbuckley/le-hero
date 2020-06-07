@@ -9,7 +9,7 @@
 #include <string>
 
 namespace le_hero {
-    typedef struct {
+    struct CharacterSpecialAbilityRequirements {
         bool melee_range_weapon_needed;
         bool long_range_weapon_needed;
 
@@ -19,13 +19,13 @@ namespace le_hero {
         bool fire_element_supported;
         bool water_element_supported;
         bool mystic_element_supported;
-    } CharacterSpecialAbilityRequirements;
+    };
 
-    typedef struct {
+    struct CharacterSpecialAbility {
         uint8_t index = 0;
         std::string name;
         std::string effect;
         uint16_t cost_to_learn = 0;
         CharacterSpecialAbilityRequirements requirements = CharacterSpecialAbilityRequirements {};
-    } CharacterSpecialAbility;
+    };
 }

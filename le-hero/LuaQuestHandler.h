@@ -7,7 +7,7 @@
 
 #include <future>
 #include <queue>
-#include "LuaIncludes.h"
+#include <lua.hpp>
 #include "Quest.h"
 
 namespace le_hero {

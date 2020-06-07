@@ -19,10 +19,10 @@ namespace le_hero {
 		Z,
 	};
 
-	typedef struct {
+	struct CharacterRank {
 		std::string name;
 		uint8_t attack_boost = 0;
 		uint8_t speed_boost = 0;
 		uint8_t health_boost = 0;
-	} CharacterRank;
+	};
 }

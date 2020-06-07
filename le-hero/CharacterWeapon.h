@@ -43,7 +43,7 @@ namespace le_hero {
 		MAGICAL,
 	};
 
-	typedef struct {
+	struct CharacterWeapon {
 		uint8_t collection_index = 0;
 		enum WeaponCategory category = WeaponCategory::NO_CATEGORY;
 		enum WeaponHandling handling = WeaponHandling::ONE_HANDED;
@@ -55,5 +55,5 @@ namespace le_hero {
 		uint8_t strength = 0;
 		bool can_inflict_status = false;
 		uint8_t inflicted_status = 0;
-	} CharacterWeapon;
+	};
 }

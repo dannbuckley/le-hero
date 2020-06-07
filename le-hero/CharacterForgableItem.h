@@ -8,7 +8,7 @@
 #include "CharacterItem.h"
 
 namespace le_hero {
-    typedef struct {
+    struct CharacterForgableItem {
         uint8_t base_item = 0;
         uint32_t forge_cost = 0;
         uint8_t required_item_left = 0;
@@ -16,5 +16,5 @@ namespace le_hero {
 
         bool requires_triple = false;
         uint8_t required_item_center = 0;
-    } CharacterForgableItem;
+    };
 }

@@ -16,11 +16,11 @@ namespace le_hero {
 		MULTI_INFLUENCE,
 	};
 
-	typedef struct {
+	struct CharacterStatus {
 		uint8_t index = 0;
 		std::string name;
 		std::string effect;
 		uint8_t effect_length = 0;
 		enum CharacterStatusTypes status_type = CharacterStatusTypes::HEALTH_INFLUENCE;
-	} CharacterStatus;
+	};
 }

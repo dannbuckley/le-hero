@@ -24,7 +24,7 @@ namespace le_hero {
         ITEM_RANK_A,
     };
 
-    typedef struct {
+    struct CharacterItem {
         std::string name;
         std::string effect;
         enum CharacterItemType item_type = CharacterItemType::ITEM_ENHANCEMENT;
@@ -32,5 +32,5 @@ namespace le_hero {
         enum CharacterElements item_element = CharacterElements::BASIC;
         uint32_t cost = 0;
         uint8_t available_at_level = 0;
-    } CharacterItem;
+    };
 }

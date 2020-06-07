@@ -9,7 +9,7 @@
 
 namespace le_hero {
     namespace quest {
-        typedef struct {
+        struct Quest {
             std::string name;
             std::string description;
             std::vector<CharacterMeta> enemy_info;
@@ -19,11 +19,11 @@ namespace le_hero {
             uint16_t prize_experience = 0;
             std::vector<uint8_t> prize_items;
             std::vector<uint8_t> prize_weapons;
-        } Quest;
+        };
 
-        typedef struct {
+        struct QuestEnemyInfo {
             uint8_t enemy_index = 0;
             CharacterMeta enemy_meta;
-        } QuestEnemyInfo;
+        };
     }
 }

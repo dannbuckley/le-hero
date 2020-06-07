@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(ProjectDir)\glew-2_1_0\include;$(ProjectDir)\sdl2-2_0_12\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\lua-5_3_5\include;$(SolutionDir)Dependencies\sdl2-2_0_12\include;$(SolutionDir)Dependencies\glm-0_9_9_8\include;$(SolutionDir)Dependencies\glew-2_1_0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -95,6 +95,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>opengl32.lib;$(SolutionDir)Dependencies\lua-5_3_5\liblua53.a;$(SolutionDir)Dependencies\glew-2_1_0\lib\glew32.lib;$(SolutionDir)Dependencies\sdl2-2_0_12\lib\SDL2.lib;$(SolutionDir)Dependencies\sdl2-2_0_12\lib\SDL2main.lib;$(SolutionDir)Dependencies\sdl2_image-2_0_5\lib\SDL2_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -181,7 +182,6 @@
     <ClInclude Include="GameExceptions.h" />
     <ClInclude Include="LuaDefaults.h" />
     <ClInclude Include="LuaHandler.h" />
-    <ClInclude Include="LuaIncludes.h" />
     <ClInclude Include="LuaQuestHandler.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestHandler.h" />

@@ -38,7 +38,7 @@ namespace le_hero {
 			std::vector<std::future<void>> quest_futures;
 			auto num_quests = env->get_num_quest_refs();
 
-			for (int i = 0; i < num_quests; i++) {
+			for (unsigned int i = 0; i < num_quests; i++) {
 				const auto& q_ref = env->get_quest_ref(i);
 				quest_futures.push_back(std::async(std::launch::async, load_individual_quest, &pq, q_ref, i));
 			}
@@ -52,9 +52,9 @@ namespace le_hero {
 		// Parses each Quest enemy info object found in quest file
         bool LuaQuestHandler::parse_quest_enemy_info_objects(lua_State* L, quest::Quest& q)
         {
-			int num_enemies = 0;
+			size_t num_enemies = 0;
 			try {
-				num_enemies = (int)LuaHelpers::get_number_value_from_table(L, "NumEnemies");
+				num_enemies = (size_t)LuaHelpers::get_number_value_from_table(L, "NumEnemies");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -66,7 +66,7 @@ namespace le_hero {
 			lua_gettable(L, -2);
 
 			if (lua_istable(L, -1)) {
-				for (int i = 0; i < num_enemies; i++) {
+				for (unsigned int i = 0; i < num_enemies; i++) {
 					// push info object index number onto lua stack
 					lua_pushnumber(L, i);
 					lua_gettable(L, -2);
@@ -109,9 +109,9 @@ namespace le_hero {
 		// Parses each Quest prize item found in quest file
         bool LuaQuestHandler::parse_quest_prize_items(lua_State* L, quest::Quest& q)
         {
-			int num_prize_items = 0;
+			size_t num_prize_items = 0;
 			try {
-				num_prize_items = (int)LuaHelpers::get_number_value_from_table(L, "NumPrizeItems");
+				num_prize_items = (size_t)LuaHelpers::get_number_value_from_table(L, "NumPrizeItems");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -123,7 +123,7 @@ namespace le_hero {
 			lua_gettable(L, -2);
 
 			if (lua_istable(L, -1)) {
-				for (int i = 0; i < num_prize_items; i++) {
+				for (unsigned int i = 0; i < num_prize_items; i++) {
 					// push prize item index number onto lua stack
 					lua_pushnumber(L, i);
 					lua_gettable(L, -2);
@@ -155,9 +155,9 @@ namespace le_hero {
 		// Parses each Quest prize weapon found in quest file
         bool LuaQuestHandler::parse_quest_prize_weapons(lua_State* L, quest::Quest& q)
         {
-			int num_prize_weapons = 0;
+			size_t num_prize_weapons = 0;
 			try {
-				num_prize_weapons = (int)LuaHelpers::get_number_value_from_table(L, "NumPrizeWeapons");
+				num_prize_weapons = (size_t)LuaHelpers::get_number_value_from_table(L, "NumPrizeWeapons");
 			}
 			catch (exception::unexpected_type_error& e) {
 				std::cout << e.what() << std::endl;
@@ -169,7 +169,7 @@ namespace le_hero {
 			lua_gettable(L, -2);
 
 			if (lua_istable(L, -1)) {
-				for (int i = 0; i < num_prize_weapons; i++) {
+				for (unsigned int i = 0; i < num_prize_weapons; i++) {
 					// push prize weapon index number onto lua stack
 					lua_pushnumber(L, i);
 					lua_gettable(L, -2);
@@ -257,6 +257,7 @@ namespace le_hero {
 			auto pq = construct_quests_queue(env);
 
 			std::vector<quest::Quest> quests;
+			quests.reserve(pq.size());
 
 			// transform priority queue of QuestInfo objects into vector of Quest objects
 			while (!pq.empty()) {

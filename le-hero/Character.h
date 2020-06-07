@@ -16,7 +16,7 @@
 namespace le_hero {
     // Structure for holding Character metadata
     // Used for construction of Character class from savefile or quest enemy info
-    typedef struct {
+    struct CharacterMeta {
         enum CharacterElements element;
         enum CharacterRanks rank;
         uint16_t total_experience;
@@ -27,7 +27,7 @@ namespace le_hero {
         std::vector<bool> vault;
         std::vector<uint8_t> inventory;
         std::vector<bool> library;
-    } CharacterMeta;
+    };
 
     class Character
     {

@@ -8,8 +8,8 @@
 #include <iostream>
 #include <exception>
 #include <string>
+#include <lua.hpp>
 #include "GameExceptions.h"
-#include "LuaIncludes.h"
 #include "spdlog/spdlog.h"
 
 namespace le_hero {

@@ -19,7 +19,7 @@ namespace le_hero {
 		ALPHA,
 	};
 
-	typedef struct {
+	struct CharacterElement {
 		std::string name;
 		uint8_t armor_percent = 0;
 		uint8_t armor_turns = 0;
@@ -27,5 +27,5 @@ namespace le_hero {
 		uint8_t base_speed = 0;
 		uint8_t base_health = 0;
 		enum CharacterElements element_identifier = CharacterElements::BASIC;
-	} CharacterElement;
+	};
 }
