@@ -6,6 +6,9 @@
 #pragma once
 
 #include "GraphicsIncludes.h"
+#include "IndexBuffer.h"
+#include "Shader.h"
+#include "VertexArray.h"
 
 namespace le_hero {
     namespace graphics {
@@ -20,9 +23,7 @@ namespace le_hero {
             SDL_GLContext gl_context = NULL;
             GLuint txID = 0;
 
-            SDL_Surface* load_surface(const char* path);
             bool initialize_gl();
-            void apply_png();
 
         public:
             Renderer(int w = 640, int h = 480);
@@ -30,9 +31,11 @@ namespace le_hero {
             bool is_initialized();
 
             bool start_window();
-            bool load_image();
-            void render();
             void quit();
+
+            void clear() const;
+            void draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader);
+            void swap_buffers();
         };
     }
 }

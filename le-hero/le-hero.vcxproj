@@ -156,11 +156,16 @@
     <ClCompile Include="CharacterSpecialAbilityEffects.cpp" />
     <ClCompile Include="CharacterStatusEffects.cpp" />
     <ClCompile Include="Game.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="le-hero.cpp" />
     <ClCompile Include="LuaHandler.cpp" />
     <ClCompile Include="LuaQuestHandler.cpp" />
     <ClCompile Include="QuestHandler.cpp" />
     <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="Shader.cpp" />
+    <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="VertexArray.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Character.h" />
@@ -180,6 +185,8 @@
     <ClInclude Include="CharacterWeapon.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="GameExceptions.h" />
+    <ClInclude Include="GLDebug.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="LuaDefaults.h" />
     <ClInclude Include="LuaHandler.h" />
     <ClInclude Include="LuaQuestHandler.h" />
@@ -187,11 +194,17 @@
     <ClInclude Include="QuestHandler.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="GraphicsIncludes.h" />
+    <ClInclude Include="Shader.h" />
     <ClInclude Include="StateHandler.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="VertexArray.h" />
+    <ClInclude Include="VertexBuffer.h" />
+    <ClInclude Include="VertexBufferLayout.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />
+    <None Include="game.shader" />
     <None Include="quests\index.lua" />
     <None Include="quests\quest_into_the_depths.lua" />
     <None Include="quests\quest_onward_young_hero.lua" />

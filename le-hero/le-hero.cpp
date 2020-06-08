@@ -5,9 +5,20 @@
 
 #include <iostream>
 #include <fstream>
-#include "Renderer.h"
+
+#include <glm.hpp>
+#include <gtc/matrix_transform.hpp>
+
 #include "LuaQuestHandler.h"
 #include "CharacterBattleHandler.h"
+
+#include "Renderer.h"
+#include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
+#include "IndexBuffer.h"
+#include "VertexArray.h"
+#include "Shader.h"
+#include "Texture.h"
 
 // gabime/spdlog, installed via vcpkg
 #include "spdlog/spdlog.h"
@@ -66,9 +77,11 @@ int main(int argc, char* argv[])
     le_hero::game::game_act(le_hero::state::StateActions::FINISH_PARSING_QUEST_FILES);
 
     spdlog::get("logger")->info("Quest data parsed successfully.");
+    
+    using namespace le_hero::graphics;
 
     // create SDL renderer object with default window size
-    le_hero::graphics::Renderer r;
+    Renderer r;
 
     // check if renderer has been initialized
     if (!r.is_initialized()) {
@@ -76,20 +89,72 @@ int main(int argc, char* argv[])
         return EXIT_FAILURE;
     }
 
-    // main display loop
-    bool active = true;
-    SDL_Event e;
+    {
+        // vertex array
+        float positions[] = {
+            -2.0f, -1.5f, 0.0f, 1.0f, // 0
+             2.0f, -1.5f, 1.0f, 1.0f, // 1
+             2.0f,  1.5f, 1.0f, 0.0f, // 2
+            -2.0f,  1.5f, 0.0f, 0.0f, // 3
+        };
 
-    while (active) {
-        // handle SDL events
-        while (SDL_PollEvent(&e) != 0) {
-            if (e.type == SDL_QUIT) {
-                active = false;
+        // index array
+        unsigned int indices[] = {
+            0, 1, 2,
+            2, 3, 0
+        };
+
+        VertexArray va;
+        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+
+        VertexBufferLayout layout;
+        layout.push<float>(2);
+        layout.push<float>(2);
+        va.add_buffer(vb, layout);
+
+        IndexBuffer ib(indices, 6);
+
+        // orthographic projection matrix
+        glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
+        // load shader and apply projection matrix
+        Shader shader("game.shader");
+        shader.bind();
+        shader.set_uniform_mat_4f("u_MVP", projection);
+
+        // load temporary loading screen texture
+        Texture texture("img/RGBLoadingScreen.png");
+        texture.bind();
+        shader.set_uniform_1i("u_Texture", 0);
+
+        // unbind all objects
+        va.unbind();
+        shader.unbind();
+        vb.unbind();
+        ib.unbind();
+
+        // main display loop
+        bool active = true;
+        SDL_Event e;
+
+        while (active) {
+            // handle SDL events
+            while (SDL_PollEvent(&e) != 0) {
+                if (e.type == SDL_QUIT) {
+                    active = false;
+                }
             }
-        }
 
-        // update display
-        r.render();
+            // update display
+            r.clear();
+            shader.bind();
+            r.draw(va, ib, shader);
+
+            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+
+            // swap OpenGL buffer for window
+            r.swap_buffers();
+        }
     }
 
     // free SDL resources
