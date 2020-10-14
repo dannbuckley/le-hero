@@ -161,6 +161,7 @@
     <ClCompile Include="LuaHandler.cpp" />
     <ClCompile Include="LuaQuestHandler.cpp" />
     <ClCompile Include="QuestHandler.cpp" />
+    <ClCompile Include="QuestLoaderQueue.cpp" />
     <ClCompile Include="Renderer.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="Texture.cpp" />
@@ -192,6 +193,7 @@
     <ClInclude Include="LuaQuestHandler.h" />
     <ClInclude Include="Quest.h" />
     <ClInclude Include="QuestHandler.h" />
+    <ClInclude Include="QuestLoaderQueue.h" />
     <ClInclude Include="Renderer.h" />
     <ClInclude Include="GraphicsIncludes.h" />
     <ClInclude Include="Shader.h" />

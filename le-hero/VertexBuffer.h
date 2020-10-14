@@ -1,3 +1,8 @@
+/*
+ * VertexBuffer.h
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #pragma once
 
 namespace le_hero {

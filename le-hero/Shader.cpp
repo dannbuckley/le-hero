@@ -1,3 +1,8 @@
+/*
+ * Shader.cpp
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #include <iostream>
 #include <fstream>
 #include <sstream>

@@ -80,7 +80,7 @@ namespace le_hero {
             state_handler->push(new_state);
 
             // log state change
-            spdlog::get("logger")->debug("Changed to {} state (value {})", StateHandler::get_state_string(new_state), new_state);
+            spdlog::get("logger")->debug("Changed to {} state (value {})", state::get_state_string(new_state), new_state);
             return true;
         }
 
@@ -97,13 +97,13 @@ namespace le_hero {
 
             // record previous state for debugging
             state_history.push_back(last_state);
-            spdlog::get("logger")->debug("Exited {} state (value {})", StateHandler::get_state_string(last_state), last_state);
+            spdlog::get("logger")->debug("Exited {} state (value {})", state::get_state_string(last_state), last_state);
             return true;
         }
 
         // Handles game_act() calls while in stateless mode
         bool act_in_stateless(enum StateActions action) {
-            spdlog::get("logger")->debug("Called game::act_in_stateless({}) (value {})", StateHandler::get_action_string(action), action);
+            spdlog::get("logger")->debug("Called game::act_in_stateless({}) (value {})", state::get_action_string(action), action);
             switch (action) {
             case StateActions::START_SETUP:
                 // enter initialization mode
@@ -129,7 +129,7 @@ namespace le_hero {
 
         // Handles game_act() calls while in initialization mode
         bool act_in_initializing(enum StateActions action) {
-            spdlog::get("logger")->debug("Called game::act_in_initializing({}) (value {})", StateHandler::get_action_string(action), action);
+            spdlog::get("logger")->debug("Called game::act_in_initializing({}) (value {})", state::get_action_string(action), action);
             switch (action) {
             case StateActions::FINISH_SETUP:
                 // exit initialization mode
@@ -151,7 +151,7 @@ namespace le_hero {
 
         // Handles game_act() calls while in parsing mode
         bool act_in_parsing(enum StateActions action) {
-            spdlog::get("logger")->debug("Called game::act_in_parsing({}) (value {})", StateHandler::get_action_string(action), action);
+            spdlog::get("logger")->debug("Called game::act_in_parsing({}) (value {})", state::get_action_string(action), action);
             switch (action) {
             case StateActions::FINISH_PARSING_SETTINGS:
             case StateActions::FINISH_PARSING_QUESTS_INDEX:
@@ -167,7 +167,7 @@ namespace le_hero {
 
         // Handles game_act() calls while in quest mode
         bool act_in_quest(enum StateActions action) {
-            spdlog::get("logger")->debug("Called game::act_in_quest({}) (value {})", StateHandler::get_action_string(action), action);
+            spdlog::get("logger")->debug("Called game::act_in_quest({}) (value {})", state::get_action_string(action), action);
             switch (action) {
             case StateActions::END_QUEST:
                 // exit quest mode
@@ -199,7 +199,7 @@ namespace le_hero {
 
         // Handles game_act() calls while in menu mode
         bool act_in_menu(enum StateActions action) {
-            spdlog::get("logger")->debug("Called game::act_in_menu({}) (value {})", StateHandler::get_action_string(action), action);
+            spdlog::get("logger")->debug("Called game::act_in_menu({}) (value {})", state::get_action_string(action), action);
             switch (action) {
             case StateActions::CLOSE_MAIN_MENU:
             case StateActions::CLOSE_PLAY_SUBMENU:
@@ -230,7 +230,7 @@ namespace le_hero {
         bool game_act(enum StateActions action) {
             // record action for debugging
             action_history.push_back(action);
-            spdlog::get("logger")->debug("Called game::game_act({}) (value {})", StateHandler::get_action_string(action), action);
+            spdlog::get("logger")->debug("Called game::game_act({}) (value {})", state::get_action_string(action), action);
 
             // determine current state and perform action
             switch (get_current_state()) {

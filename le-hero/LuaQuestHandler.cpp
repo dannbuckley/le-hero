@@ -12,7 +12,7 @@ namespace le_hero {
 		static std::mutex quests_mutex;
 
 		// Loads an individual quest asynchronously
-		void LuaQuestHandler::load_individual_quest(std::priority_queue<QuestInfo, std::vector<QuestInfo>, QuestInfoCmp>* pq, std::pair<std::string, std::string> quest_ref, uint8_t index)
+		void LuaQuestHandler::load_individual_quest(QuestLoaderQueue* pq, std::pair<std::string, std::string> quest_ref, uint8_t index)
 		{
 			LuaQuestHandler lqh;
 			quest::Quest q;
@@ -24,17 +24,13 @@ namespace le_hero {
 			}
 
 			std::lock_guard<std::mutex> lock(quests_mutex);
-			pq->push(QuestInfo{ index, q });
+			pq->push(q, index);
 		}
 
 		// Constructs a priority queue from all quest data with the quest index acting as the item priority
-		std::priority_queue<LuaQuestHandler::QuestInfo,
-			std::vector<LuaQuestHandler::QuestInfo>,
-			LuaQuestHandler::QuestInfoCmp> LuaQuestHandler::construct_quests_queue()
+		QuestLoaderQueue LuaQuestHandler::construct_quests_queue()
 		{
-			std::priority_queue<LuaQuestHandler::QuestInfo,
-				std::vector<LuaQuestHandler::QuestInfo>,
-				LuaQuestHandler::QuestInfoCmp> pq;
+			QuestLoaderQueue pq;
 			std::vector<std::future<void>> quest_futures;
 			auto num_quests = game::get_num_quest_refs();
 
@@ -44,7 +40,7 @@ namespace le_hero {
 			}
 
 			// wait for all quests to finish loading
-			while (pq.size() != game::get_num_quest_refs());
+			while (pq.size() != num_quests);
 
 			return pq;
 		}
@@ -255,17 +251,7 @@ namespace le_hero {
 		{
 			PROFILE_TIMER(); // record the time elapsed for debugging
 			auto pq = construct_quests_queue();
-
-			std::vector<quest::Quest> quests;
-			quests.reserve(pq.size());
-
-			// transform priority queue of QuestInfo objects into vector of Quest objects
-			while (!pq.empty()) {
-				quests.push_back(pq.top().data);
-				pq.pop();
-			}
-
-			return quests;
+			return pq.export_to_vector();
 		}
     }
 }

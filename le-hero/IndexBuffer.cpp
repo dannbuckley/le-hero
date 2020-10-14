@@ -1,3 +1,8 @@
+/*
+ * IndexBuffer.cpp
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #include "IndexBuffer.h"
 #include "GLDebug.h"
 

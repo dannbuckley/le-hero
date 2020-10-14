@@ -1,3 +1,8 @@
+/*
+ * VertexArray.h
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #pragma once
 
 #include "VertexBuffer.h"

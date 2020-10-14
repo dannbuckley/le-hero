@@ -1,5 +1,5 @@
 /**
- * SDLIncludes.h
+ * GraphicsIncludes.h
  * Copyright (c) 2020 Daniel Buckley
  */
 

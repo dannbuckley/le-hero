@@ -6,34 +6,18 @@
 #pragma once
 
 #include <future>
-#include <queue>
 #include <lua.hpp>
-#include "Quest.h"
+#include "QuestLoaderQueue.h"
 
 namespace le_hero {
 	namespace lua {
 		class LuaQuestHandler
 		{
 		private:
-			typedef struct {
-				uint8_t index;
-				quest::Quest data;
-			} QuestInfo;
-
-			struct QuestInfoCmp {
-				bool operator()(const QuestInfo& lhs, const QuestInfo& rhs) const
-				{
-					return lhs.index > rhs.index;
-				}
-			};
-
-			static void load_individual_quest(std::priority_queue<QuestInfo,
-				std::vector<QuestInfo>,
-				QuestInfoCmp>* pq,
+			static void load_individual_quest(QuestLoaderQueue* pq,
 				std::pair<std::string, std::string> quest_ref,
 				uint8_t index);
-
-			std::priority_queue<QuestInfo, std::vector<QuestInfo>, QuestInfoCmp> construct_quests_queue();
+			QuestLoaderQueue construct_quests_queue();
 
 			bool parse_quest_enemy_info_objects(lua_State* L, quest::Quest& q);
 			bool parse_quest_prize_items(lua_State* L, quest::Quest& q);

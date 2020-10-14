@@ -1,3 +1,8 @@
+/*
+ * GLDebug.h
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #pragma once
 
 #include <GL\glew.h>

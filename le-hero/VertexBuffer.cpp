@@ -1,3 +1,8 @@
+/*
+ * VertexBuffer.cpp
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #include "GLDebug.h"
 #include "VertexBuffer.h"
 

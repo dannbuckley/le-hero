@@ -1,3 +1,8 @@
+/*
+ * VertexArray.cpp
+ * Copyright (c) 2020 Daniel Buckley
+ */
+
 #include "VertexArray.h"
 
 namespace le_hero {
