@@ -13,13 +13,13 @@ namespace le_hero {
         {
             PROFILE_GRAPHICS_TIMER();
 
-            GLCall(glClear(GL_COLOR_BUFFER_BIT));
-            GLCall(glViewport(0.0f, 0.0f, this->width, this->height));
+            glClear(GL_COLOR_BUFFER_BIT);
+            glViewport(0.0f, 0.0f, this->width, this->height);
 
-            GLCall(glClearColor(0.0f, 0.0f, 0.0, 1.0f));
+            glClearColor(0.0f, 0.0f, 0.0, 1.0f);
 
-            GLCall(glEnable(GL_BLEND));
-            GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
             return true;
         }
 
@@ -120,7 +120,7 @@ namespace le_hero {
 
         void Renderer::clear() const
         {
-            GLCall(glClear(GL_COLOR_BUFFER_BIT));
+            glClear(GL_COLOR_BUFFER_BIT);
         }
 
         void Renderer::draw(const VertexArray& va, const IndexBuffer& ib, const Shader& shader)
@@ -129,7 +129,7 @@ namespace le_hero {
             va.bind();
             ib.bind();
 
-            GLCall(glDrawElements(GL_TRIANGLES, ib.get_count(), GL_UNSIGNED_INT, nullptr));
+            glDrawElements(GL_TRIANGLES, ib.get_count(), GL_UNSIGNED_INT, nullptr);
         }
 
         void Renderer::swap_buffers()

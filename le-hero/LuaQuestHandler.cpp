@@ -3,6 +3,7 @@
  * Copyright (c) 2020 Daniel Buckley
  */
 
+#include <future>
 #include "LuaDefaults.h"
 #include "LuaQuestHandler.h"
 #include "Timer.h"

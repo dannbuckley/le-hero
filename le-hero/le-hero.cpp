@@ -6,24 +6,60 @@
 #include <iostream>
 #include <fstream>
 
+// SDL2 and OpenGL
+#include "GraphicsIncludes.h"
+
+// OpenGL mathematics
 #include <glm.hpp>
 #include <gtc/matrix_transform.hpp>
 
-#include "LuaQuestHandler.h"
-#include "CharacterBattleHandler.h"
+//#include "Renderer.h"
+//#include "VertexBuffer.h"
+//#include "VertexBufferLayout.h"
+//#include "IndexBuffer.h"
+//#include "VertexArray.h"
+//#include "Shader.h"
+//#include "Texture.h"
 
-#include "Renderer.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "Texture.h"
+// Dear ImGui
+#include <imgui.h>
+#include <imgui_impl_sdl.h>
+#include <imgui_impl_opengl3.h>
 
 // gabime/spdlog, installed via vcpkg
 #include "spdlog/spdlog.h"
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"
+
+#include "LuaQuestHandler.h"
+#include "CharacterBattleHandler.h"
+
+void graphics_debug_callback(
+    GLenum source,
+    GLenum type,
+    GLuint id,
+    GLenum severity,
+    GLsizei length,
+    const GLchar* message,
+    const void* userParam) {
+    switch (severity) {
+    case GL_DEBUG_SEVERITY_HIGH:
+        spdlog::get("graphics_logger")->critical("[OpenGL High Severity] {}", message);
+        return;
+    case GL_DEBUG_SEVERITY_MEDIUM:
+        spdlog::get("graphics_logger")->error("[OpenGL Medium Severity] {}", message);
+        return;
+    case GL_DEBUG_SEVERITY_LOW:
+        spdlog::get("graphics_logger")->warn("[OpenGL Low Severity] {}", message);
+        return;
+    case GL_DEBUG_SEVERITY_NOTIFICATION:
+        spdlog::get("graphics_logger")->trace("[OpenGL Notification] {}", message);
+        return;
+    }
+
+    // unknown level
+    ASSERT(false);
+}
 
 int main(int argc, char* argv[])
 {
@@ -77,88 +113,138 @@ int main(int argc, char* argv[])
     le_hero::game::game_act(le_hero::state::StateActions::FINISH_PARSING_QUEST_FILES);
 
     spdlog::get("logger")->info("Quest data parsed successfully.");
-    
-    using namespace le_hero::graphics;
 
-    // create SDL renderer object with default window size
-    Renderer r;
+    // create SDL window
+    SDL_Init(SDL_INIT_VIDEO < 0);
+    auto window = SDL_CreateWindow("",
+        SDL_WINDOWPOS_UNDEFINED,
+        SDL_WINDOWPOS_UNDEFINED,
+        1280,
+        780,
+        SDL_WINDOW_OPENGL);
 
-    // check if renderer has been initialized
-    if (!r.is_initialized()) {
-        // SDL initialization process failed at some point
+    // initialize SDL image library
+    IMG_Init(IMG_INIT_PNG);
+
+    // set OpenGL version for SDL
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 5);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+
+    // create OpenGL context for SDL
+    auto gl_ctx = SDL_GL_CreateContext(window);
+    auto glew_status = glewInit();
+    if (glew_status != GLEW_OK) {
+        spdlog::get("graphics_logger")->error("[GLEW Error] {}", glewGetErrorString(glew_status));
         return EXIT_FAILURE;
     }
+    SDL_GL_SetSwapInterval(1); // VSync
 
-    {
-        // vertex array
-        float positions[] = {
-            -2.0f, -1.5f, 0.0f, 1.0f, // 0
-             2.0f, -1.5f, 1.0f, 1.0f, // 1
-             2.0f,  1.5f, 1.0f, 0.0f, // 2
-            -2.0f,  1.5f, 0.0f, 0.0f, // 3
-        };
+    // enable OpenGL debug output
+    glEnable(GL_DEBUG_OUTPUT);
+    glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+    glDebugMessageCallback((GLDEBUGPROC)graphics_debug_callback, nullptr);
+    glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_NOTIFICATION, 0, NULL, GL_FALSE);
 
-        // index array
-        unsigned int indices[] = {
-            0, 1, 2,
-            2, 3, 0
-        };
+    // initialize OpenGL viewport
+    glClear(GL_COLOR_BUFFER_BIT);
+    glViewport(0.0f, 0.0f, 1280, 720);
 
-        VertexArray va;
-        VertexBuffer vb(positions, 4 * 4 * sizeof(float));
+    // enable blending
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        VertexBufferLayout layout;
-        layout.push<float>(2);
-        layout.push<float>(2);
-        va.add_buffer(vb, layout);
+    // initialize ImGui context
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-        IndexBuffer ib(indices, 6);
+    // initialize SDL and OpenGL implementations for ImGui
+    ImGui::StyleColorsLight();
+    ImGui_ImplSDL2_InitForOpenGL(window, gl_ctx);
+    ImGui_ImplOpenGL3_Init();
 
-        // orthographic projection matrix
-        glm::mat4 projection = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+    // demo ImGui state
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-        // load shader and apply projection matrix
-        Shader shader("game.shader");
-        shader.bind();
-        shader.set_uniform_mat_4f("u_MVP", projection);
-
-        // load temporary loading screen texture
-        Texture texture("img/RGBLoadingScreen.png");
-        texture.bind();
-        shader.set_uniform_1i("u_Texture", 0);
-
-        // unbind all objects
-        va.unbind();
-        shader.unbind();
-        vb.unbind();
-        ib.unbind();
-
-        // main display loop
-        bool active = true;
-        SDL_Event e;
-
-        while (active) {
-            // handle SDL events
-            while (SDL_PollEvent(&e) != 0) {
-                if (e.type == SDL_QUIT) {
-                    active = false;
-                }
+    // main loop
+    bool active = true;
+    SDL_Event e;
+    while (active) {
+        while (SDL_PollEvent(&e) != 0) {
+            ImGui_ImplSDL2_ProcessEvent(&e);
+            if (e.type == SDL_QUIT) {
+                active = false;
             }
-
-            // update display
-            r.clear();
-            shader.bind();
-            r.draw(va, ib, shader);
-
-            GLCall(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
-
-            // swap OpenGL buffer for window
-            r.swap_buffers();
         }
+
+        // set background color to black
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+
+        // advance to next ImGui frame
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplSDL2_NewFrame(window);
+        ImGui::NewFrame();
+
+        if (show_demo_window) {
+            ImGui::ShowDemoWindow(&show_demo_window);
+        }
+
+        {
+            static float f = 0.0f;
+            static int counter = 0;
+
+            ImGui::Begin("Hello, world!");
+
+            ImGui::Text("This is some useful text.");
+            ImGui::Checkbox("Demo Window", &show_demo_window);
+            ImGui::Checkbox("Another Window", &show_another_window);
+
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+            ImGui::ColorEdit3("clear color", (float*)&clear_color);
+
+            if (ImGui::Button("Button")) {
+                counter++;
+            }
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", counter);
+
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+
+        if (show_another_window) {
+            ImGui::Begin("Another Window", &show_another_window);
+            ImGui::Text("Hello from another window!");
+            if (ImGui::Button("Close Me")) {
+                show_another_window = false;
+            }
+            ImGui::End();
+        }
+
+        // render ImGui content
+        ImGui::Render();
+
+        glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // swap SDL and OpenGL buffers
+        SDL_GL_SwapWindow(window);
     }
 
-    // free SDL resources
-    r.quit();
+    // destroy ImGui resources
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplSDL2_Shutdown();
+    ImGui::DestroyContext();
+
+    // destroy SDL resources
+    SDL_GL_DeleteContext(gl_ctx);
+    SDL_DestroyWindow(window);
+    SDL_Quit();
 
     return EXIT_SUCCESS;
 }

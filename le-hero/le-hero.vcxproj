@@ -72,7 +72,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(SolutionDir)Dependencies\lua-5_3_5\include;$(SolutionDir)Dependencies\sdl2-2_0_12\include;$(SolutionDir)Dependencies\glm-0_9_9_8\include;$(SolutionDir)Dependencies\glew-2_1_0\include;$(IncludePath)</IncludePath>
+    <IncludePath>$(SolutionDir)Dependencies\imgui;$(SolutionDir)Dependencies\lua-5_3_5\include;$(SolutionDir)Dependencies\sdl2-2_0_12\include;$(SolutionDir)Dependencies\glm-0_9_9_8\include;$(SolutionDir)Dependencies\glew-2_1_0\include;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -149,6 +149,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\Dependencies\imgui\imgui.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_demo.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_draw.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_impl_opengl3.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_impl_sdl.cpp" />
+    <ClCompile Include="..\Dependencies\imgui\imgui_widgets.cpp" />
     <ClCompile Include="Character.cpp" />
     <ClCompile Include="CharacterBattleHandler.cpp" />
     <ClCompile Include="CharacterItemEffects.cpp" />

@@ -7,6 +7,7 @@
 #include <fstream>
 #include <sstream>
 
+#include "spdlog/spdlog.h"
 #include "GLDebug.h"
 #include "Shader.h"
 
@@ -45,24 +46,24 @@ namespace le_hero {
 
 		unsigned int Shader::compile_shader(unsigned int type, const std::string& source)
 		{
-			GLCall(unsigned int id = glCreateShader(type));
+			unsigned int id = glCreateShader(type);
 			const char* src = source.c_str();
-			GLCall(glShaderSource(id, 1, &src, nullptr));
-			GLCall(glCompileShader(id));
+			glShaderSource(id, 1, &src, nullptr);
+			glCompileShader(id);
 
 			int result;
-			GLCall(glGetShaderiv(id, GL_COMPILE_STATUS, &result));
+			glGetShaderiv(id, GL_COMPILE_STATUS, &result);
 			if (result == GL_FALSE) {
 				int length;
-				GLCall(glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length));
+				glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
 
 				char* message = (char*)_malloca(length * sizeof(char));
-				GLCall(glGetShaderInfoLog(id, length, &length, message));
+				glGetShaderInfoLog(id, length, &length, message);
 
 				spdlog::get("graphics_logger")->error("Failed to compile {} shader!", type);
 				spdlog::get("graphics_logger")->error("Message: {}", message);
 
-				GLCall(glDeleteShader(id));
+				glDeleteShader(id);
 				return 0;
 			}
 
@@ -71,17 +72,17 @@ namespace le_hero {
 
 		unsigned int Shader::create_shader(const std::string& vertex_shader, const std::string& fragment_shader)
 		{
-			GLCall(unsigned int program = glCreateProgram());
+			unsigned int program = glCreateProgram();
 			unsigned int vs = compile_shader(GL_VERTEX_SHADER, vertex_shader);
 			unsigned int fs = compile_shader(GL_FRAGMENT_SHADER, fragment_shader);
 
-			GLCall(glAttachShader(program, vs));
-			GLCall(glAttachShader(program, fs));
-			GLCall(glLinkProgram(program));
-			GLCall(glValidateProgram(program));
+			glAttachShader(program, vs);
+			glAttachShader(program, fs);
+			glLinkProgram(program);
+			glValidateProgram(program);
 
-			GLCall(glDeleteShader(vs));
-			GLCall(glDeleteShader(fs));
+			glDeleteShader(vs);
+			glDeleteShader(fs);
 
 			return program;
 		}
@@ -92,7 +93,7 @@ namespace le_hero {
 				return uniform_cache[name];
 			}
 
-			GLCall(int location = glGetUniformLocation(renderer_id, name.c_str()));
+			int location = glGetUniformLocation(renderer_id, name.c_str());
 			if (location == -1) {
 				spdlog::get("graphics_logger")->warn("Uniform {} doesn't exist!", name);
 			}
@@ -110,37 +111,37 @@ namespace le_hero {
 
 		Shader::~Shader()
 		{
-			GLCall(glDeleteProgram(renderer_id));
+			glDeleteProgram(renderer_id);
 		}
 
 		void Shader::bind() const
 		{
-			GLCall(glUseProgram(renderer_id));
+			glUseProgram(renderer_id);
 		}
 
 		void Shader::unbind() const
 		{
-			GLCall(glUseProgram(0));
+			glUseProgram(0);
 		}
 
 		void Shader::set_uniform_1i(const std::string& name, int value)
 		{
-			GLCall(glUniform1i(get_uniform_location(name), value));
+			glUniform1i(get_uniform_location(name), value);
 		}
 
 		void Shader::set_uniform_1f(const std::string& name, float value)
 		{
-			GLCall(glUniform1f(get_uniform_location(name), value));
+			glUniform1f(get_uniform_location(name), value);
 		}
 
 		void Shader::set_uniform_4f(const std::string& name, float v0, float v1, float v2, float v3)
 		{
-			GLCall(glUniform4f(get_uniform_location(name), v0, v1, v2, v3));
+			glUniform4f(get_uniform_location(name), v0, v1, v2, v3);
 		}
 
 		void Shader::set_uniform_mat_4f(const std::string& name, const glm::mat4& matrix)
 		{
-			GLCall(glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &matrix[0][0]));
+			glUniformMatrix4fv(get_uniform_location(name), 1, GL_FALSE, &matrix[0][0]);
 		}
 	}
 }
