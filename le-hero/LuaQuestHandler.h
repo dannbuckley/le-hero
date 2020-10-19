@@ -19,8 +19,6 @@ namespace le_hero {
 			QuestLoaderQueue construct_quests_queue();
 
 			bool parse_quest_enemy_info_objects(lua_State* L, quest::Quest& q);
-			bool parse_quest_prize_items(lua_State* L, quest::Quest& q);
-			bool parse_quest_prize_weapons(lua_State* L, quest::Quest& q);
 
 			// Parser for quest data file in quests/ folder
 			bool parse_quest_file(std::string quest_file, quest::Quest& q);

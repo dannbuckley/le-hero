@@ -11,7 +11,6 @@
 #include <vector>
 #include <lua.hpp>
 #include "CharacterElement.h"
-#include "CharacterItem.h"
 #include "CharacterPassiveAbility.h"
 #include "CharacterRank.h"
 #include "CharacterSpecialAbility.h"
@@ -33,7 +32,6 @@ namespace le_hero {
 			bool parse_weapons(std::vector<CharacterWeapon>& w);
 			bool parse_passive_abilities(std::vector<CharacterPassiveAbility>& p_abil);
 			bool parse_special_abilities(std::vector<CharacterSpecialAbility>& s_abil);
-			bool parse_items(std::vector<CharacterItem>& im);
 
 			/* Object Parser for Quests Index File */
 
@@ -50,8 +48,7 @@ namespace le_hero {
 				std::vector<CharacterStatus>& s,
 				std::vector<CharacterWeapon>& w,
 				std::vector<CharacterPassiveAbility>& p_abil,
-				std::vector<CharacterSpecialAbility>& s_abil,
-				std::vector<CharacterItem>& im);
+				std::vector<CharacterSpecialAbility>& s_abil);
 
 			// Parser for quests/index.lua
 			bool parse_quests_index_file(std::string quests_index_file,

@@ -4,8 +4,8 @@
 --]]
 
 -- Create Quest object
-function mk_quest(d, ne, ei, rl, qt, pc, pe, npi, pi, npw, pw)
-	return {Description=d, NumEnemies=ne, EnemyInfo=ei, RecommendedLevel=rl, QuestTerrain=qt, PrizeCoins=pc, PrizeExp=pe, NumPrizeItems=npi, PrizeItems=pi, NumPrizeWeapons=npw, PrizeWeapons=pw}
+function mk_quest(d, qt, ne, ei)
+	return {Description=d, QuestTerrain=qt, NumEnemies=ne, EnemyInfo=ei}
 end
 
 -- Create Enemy Info object

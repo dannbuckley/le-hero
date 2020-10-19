@@ -325,61 +325,6 @@ namespace le_hero {
 			return true;
 		}
 
-		// Parses each Item object found in settings file
-		bool LuaHandler::parse_items(std::vector<CharacterItem>& im)
-		{
-			// get number of Items from global lua variable
-			size_t num_items = 0;
-			try {
-				num_items = (size_t)LuaHelpers::get_global_number_variable(L, "num_items");
-			}
-			catch (exception::unexpected_type_error& e) {
-				std::cout << e.what() << std::endl;
-				return false;
-			}
-
-			im.reserve(num_items);
-
-			// use lua GetSpecialAbility function to retrieve each individual Item object
-			for (unsigned int i = 0; i < num_items; i++) {
-				lua_getglobal(L, "GetItem");
-				if (lua_isfunction(L, -1)) {
-					// push object index number onto lua stack
-					lua_pushnumber(L, i);
-
-					// call GetItem(i)
-					if (LuaHelpers::validate_lua(L, lua_pcall(L, 1, 1, 0))) {
-						if (lua_istable(L, -1)) {
-							// construct Item object from lua table
-							CharacterItem item;
-
-							try {
-								item.name = LuaHelpers::get_string_value_from_table(L, "Name");
-								item.effect = LuaHelpers::get_string_value_from_table(L, "Effect");
-								item.item_type = (CharacterItemType)LuaHelpers::get_number_value_from_table(L, "ItemType");
-								item.item_rank = (CharacterItemRank)LuaHelpers::get_number_value_from_table(L, "ItemRank");
-								item.item_element = (CharacterElements)LuaHelpers::get_number_value_from_table(L, "ItemElement");
-								item.cost = (uint32_t)LuaHelpers::get_number_value_from_table(L, "Cost");
-								item.available_at_level = (uint8_t)LuaHelpers::get_number_value_from_table(L, "AvailableAtLevel");
-							}
-							catch (exception::unexpected_type_error& e) {
-								std::cout << e.what() << std::endl;
-								return false;
-							}
-
-							// push Special Ability object to game environment vector
-							im.push_back(item);
-
-							// pop table off lua stack
-							lua_pop(L, 1);
-						}
-					}
-				}
-			}
-
-			return true;
-		}
-
 		// Parses each Quest reference found in quests index file
 		bool LuaHandler::parse_quest_references(std::vector<std::pair<std::string, std::string>>& qr)
 		{
@@ -445,8 +390,7 @@ namespace le_hero {
 			std::vector<CharacterStatus>& s, 
 			std::vector<CharacterWeapon>& w,
 			std::vector<CharacterPassiveAbility>& p_abil,
-			std::vector<CharacterSpecialAbility>& s_abil,
-			std::vector<CharacterItem>& im)
+			std::vector<CharacterSpecialAbility>& s_abil)
 		{
 			PROFILE_TIMER(); // record the time elapsed for debugging
 
@@ -488,10 +432,6 @@ namespace le_hero {
 			}
 
 			if (!parse_special_abilities(s_abil)) {
-				return false;
-			}
-
-			if (!parse_items(im)) {
 				return false;
 			}
 

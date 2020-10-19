@@ -24,7 +24,6 @@ namespace le_hero {
 			bool quest_started = false;
 			bool quest_completed = false;
 
-			void distribute_prizes();
 			void setup_enemy();
 
 			void enemy_defeated();

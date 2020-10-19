@@ -4,14 +4,17 @@
  */
 
 #include <exception>
-#include <stack>
+#include <imgui.h>
 #include "Game.h"
 #include "GameExceptions.h"
+#include "StateStack.h"
 #include "spdlog/spdlog.h"
 
 namespace le_hero {
     namespace game {
-        std::unique_ptr<std::stack<enum StateTypes>> state_handler;
+        /* Game State Machine */
+
+        StateStack state_handler;
 
         /* Game Data */
 
@@ -21,7 +24,6 @@ namespace le_hero {
         std::vector<CharacterWeapon> weapons;
         std::vector<CharacterPassiveAbility> passive_abilities;
         std::vector<CharacterSpecialAbility> special_abilities;
-        std::vector<CharacterItem> items;
 
         /* Quest Data */
 
@@ -29,27 +31,25 @@ namespace le_hero {
 
         /* Debug Variables */
 
-        std::vector<enum StateTypes> state_history;
-        std::vector<enum StateActions> action_history;
+        std::vector<std::string> state_history;
+        std::vector<std::string> action_history;
 
         void initialize_game_environment(const char* settings_file) {
-            state_handler = std::make_unique<std::stack<enum StateTypes>>();
-            std::unique_ptr<lua::LuaHandler> lua_handler = std::make_unique<lua::LuaHandler>();
+            lua::LuaHandler lua_handler;
 
             game_act(StateActions::START_SETUP);
             game_act(StateActions::START_PARSING_SETTINGS);
 
             // parse base game settings file
             std::string quests_index_file;
-            bool parse_result = lua_handler->parse_settings_file(settings_file,
+            bool parse_result = lua_handler.parse_settings_file(settings_file,
                 quests_index_file,
                 elements,
                 ranks,
                 statuses,
                 weapons,
                 passive_abilities,
-                special_abilities,
-                items);
+                special_abilities);
 
             // check if the base settings file has been parsed properly
             if (!parse_result) {
@@ -61,7 +61,7 @@ namespace le_hero {
             game_act(StateActions::START_PARSING_QUESTS_INDEX);
 
             // parse quests index file
-            parse_result = lua_handler->parse_quests_index_file(quests_index_file, quest_references);
+            parse_result = lua_handler.parse_quests_index_file(quests_index_file, quest_references);
 
             // check if the quests index file has been parsed properly
             if (!parse_result) {
@@ -77,7 +77,7 @@ namespace le_hero {
         bool enter_state(enum StateTypes new_state)
         {
             // enter new state
-            state_handler->push(new_state);
+            state_handler.push(new_state);
 
             // log state change
             spdlog::get("logger")->debug("Changed to {} state (value {})", state::get_state_string(new_state), new_state);
@@ -87,17 +87,17 @@ namespace le_hero {
         // Exits the current state and logs it for debugging
         bool exit_current_state()
         {
-            if (state_handler->empty()) {
+            if (state_handler.is_empty()) {
                 return false;
             }
 
             // save current state and remove from state stack
-            auto last_state = state_handler->top();
-            state_handler->pop();
+            auto last_state = state_handler.peek();
+            state_handler.pop();
 
             // record previous state for debugging
-            state_history.push_back(last_state);
-            spdlog::get("logger")->debug("Exited {} state (value {})", state::get_state_string(last_state), last_state);
+            state_history.push_back(get_state_string(last_state));
+            spdlog::get("logger")->debug("Exited {} state (value {})", state_history.back(), last_state);
             return true;
         }
 
@@ -229,8 +229,8 @@ namespace le_hero {
         // Handles state actions and logs them for debugging
         bool game_act(enum StateActions action) {
             // record action for debugging
-            action_history.push_back(action);
-            spdlog::get("logger")->debug("Called game::game_act({}) (value {})", state::get_action_string(action), action);
+            action_history.push_back(get_action_string(action));
+            spdlog::get("logger")->debug("Called game::game_act({}) (value {})", action_history.back(), action);
 
             // determine current state and perform action
             switch (get_current_state()) {
@@ -262,62 +262,164 @@ namespace le_hero {
             }
         }
 
+        // Returns the current state of the game environment
         enum StateTypes get_current_state() {
-            if (state_handler->empty()) {
+            if (state_handler.is_empty()) {
                 return StateTypes::STATELESS;
             }
             else {
-                return state_handler->top();
+                return state_handler.peek();
             }
         }
 
+        // Renders an ImGui window for viewing current game states and state/action history
+        void render_state_window()
+        {
+            ImGui::Begin("Game State");
+            if (ImGui::TreeNode("State History")) {
+                for (const auto& s : state_history) {
+                    ImGui::Text(s.c_str());
+                }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("Action History")) {
+                for (const auto& a : action_history) {
+                    ImGui::Text(a.c_str());
+                }
+                ImGui::TreePop();
+            }
+            if (ImGui::TreeNode("State Stack")) {
+                for (const auto& s : state_handler.get_display_vector()) {
+                    ImGui::Text(s.c_str());
+                }
+                ImGui::TreePop();
+            }
+            ImGui::End();
+        }
+
+        // Renders an ImGui window for viewing currently loaded character assets
+        void render_character_assets_window() {
+            ImGui::Begin("Character Assets");
+            if (ImGui::CollapsingHeader("Elements")) {
+                for (const auto& e : elements) {
+                    if (ImGui::TreeNode(e.name.c_str())) {
+                        ImGui::Text("Base Attack: %d", e.base_attack);
+                        ImGui::Text("Base Speed: %d", e.base_speed);
+                        ImGui::Text("Base Health: %d", e.base_health);
+                        ImGui::TreePop();
+                    }
+                }
+            }
+            if (ImGui::CollapsingHeader("Ranks")) {
+                for (const auto& r : ranks) {
+                    if (ImGui::TreeNode(r.name.c_str())) {
+                        ImGui::Text("Attack Boost: %d", r.attack_boost);
+                        ImGui::Text("Speed Boost: %d", r.speed_boost);
+                        ImGui::Text("Health Boost: %d", r.health_boost);
+                        ImGui::TreePop();
+                    }
+                }
+            }
+            if (ImGui::CollapsingHeader("Statuses")) {
+                for (const auto& st : statuses) {
+                    if (ImGui::TreeNode(st.name.c_str())) {
+                        ImGui::Text("Effect: %s", st.effect.c_str());
+                        ImGui::Text("Effect Length: %d", st.effect_length);
+                        ImGui::TreePop();
+                    }
+                }
+            }
+            if (ImGui::CollapsingHeader("Weapons")) {
+                for (const auto& w : weapons) {
+                    if (ImGui::TreeNode(w.name.c_str())) {
+                        ImGui::Text("Element: %d", w.element);
+                        ImGui::Text("Strength: %d", w.strength);
+                        ImGui::Text("Category: %d", w.category);
+                        ImGui::Text("Handling: %d", w.handling);
+                        ImGui::Text("Weight: %d", w.weight);
+                        ImGui::Text("Range: %d", w.range);
+                        ImGui::Text("Damage Type: %d", w.damage_type);
+                        ImGui::TreePop();
+                    }
+                }
+            }
+            if (ImGui::CollapsingHeader("Passive Abilities")) {
+                for (const auto& p : passive_abilities) {
+                    if (ImGui::TreeNode(p.name.c_str())) {
+                        ImGui::Text("Effect: %s", p.effect.c_str());
+                        ImGui::TreePop();
+                    }
+                }
+            }
+            if (ImGui::CollapsingHeader("Special Abilities")) {
+                for (const auto& sp : special_abilities) {
+                    if (ImGui::TreeNode(sp.name.c_str())) {
+                        ImGui::Text("Effect: %s", sp.effect.c_str());
+                        ImGui::TreePop();
+                    }
+                }
+            }
+            ImGui::End();
+        }
+
+        // Renders ImGui windows for the game environment
+        void render_imgui_windows()
+        {
+            render_state_window();
+            render_character_assets_window();
+        }
+
+        // Returns data for requested character element
         const CharacterElement& get_element(uint8_t index) {
             return elements[index];
         }
 
+        // Returns data for requested character rank
         const CharacterRank& get_rank(uint8_t index) {
             return ranks[index];
         }
 
+        // Returns data for requested character status
         const CharacterStatus& get_status(uint8_t index) {
             return statuses[index];
         }
 
+        // Returns data for requested character weapon
         const CharacterWeapon& get_weapon(uint8_t index) {
             return weapons[index];
         }
 
+        // Returns data for requested character passive ability
         const CharacterPassiveAbility& get_passive_ability(uint8_t index) {
             return passive_abilities[index];
         }
 
+        // Returns data for requested character special ability
         const CharacterSpecialAbility& get_special_ability(uint8_t index) {
             return special_abilities[index];
         }
 
-        const CharacterItem& get_item(uint8_t index) {
-            return items[index];
-        }
-
+        // Returns pair containing name and file location for the requested quest
         const std::pair<std::string, std::string>& get_quest_ref(uint8_t index) {
             return quest_references[index];
         }
 
+        // Returns the number of character statuses
         const size_t get_num_statuses() {
             return statuses.size();
         }
 
+        // Returns the number of character weapons
         const size_t get_num_weapons() {
             return weapons.size();
         }
+
+        // Returns the number of character special abilities
         const size_t get_num_special_abilities() {
             return special_abilities.size();
         }
 
-        const size_t get_num_items() {
-            return items.size();
-        }
-
+        // Returns the number of quest reference pairs
         const size_t get_num_quest_refs() {
             return quest_references.size();
         }

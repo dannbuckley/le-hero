@@ -9,14 +9,6 @@
 
 namespace le_hero {
 	namespace quest {
-        void QuestHandler::distribute_prizes()
-        {
-            this->player->obtain_quest_prizes(this->base->prize_coins,
-                this->base->prize_experience,
-                this->base->prize_items,
-                this->base->prize_weapons);
-        }
-
         void QuestHandler::setup_enemy()
         {
             if (this->num_enemies_defeated == this->base->enemy_info.size()) {
@@ -179,7 +171,6 @@ namespace le_hero {
         {
             if (!lose) {
                 this->quest_completed = true;
-                this->distribute_prizes();
             }
 
             this->player->end_battle();

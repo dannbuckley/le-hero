@@ -106,12 +106,5 @@ namespace le_hero {
         void reset_stats(bool reset_all = false);
         void reset_turn_data();
         void select_action(enum CharacterActionTypes action);
-
-        bool use_item(uint8_t item_index);
-
-        void obtain_quest_prizes(uint32_t prize_coins,
-            uint16_t prize_experience,
-            std::vector<uint8_t> prize_items,
-            std::vector<uint8_t> prize_weapons);
     };
 }

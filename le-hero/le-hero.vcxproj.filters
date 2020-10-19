@@ -48,9 +48,6 @@
     <ClCompile Include="CharacterStatusEffects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="CharacterItemEffects.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Renderer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -90,6 +87,9 @@
     <ClCompile Include="..\Dependencies\imgui\imgui_widgets.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="StateStack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LuaHandler.h">
@@ -117,12 +117,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CharacterSpecialAbility.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterItem.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="CharacterForgableItem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StateHandler.h">
@@ -161,9 +155,6 @@
     <ClInclude Include="CharacterStatusEffects.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="CharacterItemEffects.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -194,41 +185,86 @@
     <ClInclude Include="QuestLoaderQueue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="StateStack.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="base.lua" />
     <None Include="quests\index.lua">
       <Filter>Quest Scripts</Filter>
     </None>
-    <None Include="quests\quest_into_the_depths.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_onward_young_hero.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_out_of_the_frying_pan.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_soaring_through_the_night.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_the_first_of_many.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_the_not_so_stealthy_escape.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_through_the_swampy_marsh.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
     <None Include="quests\quest_template.lua">
-      <Filter>Quest Scripts</Filter>
-    </None>
-    <None Include="quests\quest_rekindled_acquaintances.lua">
       <Filter>Quest Scripts</Filter>
     </None>
     <None Include="game.shader">
       <Filter>Resource Files</Filter>
+    </None>
+    <None Include="quests\quest_1.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_2.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_3.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_4.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_5a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_5b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_6a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_6b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_7a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_7b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_8a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_8b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_9a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_9b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_10a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_10b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_11.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_12.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_13a.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_13b.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_14.lua">
+      <Filter>Quest Scripts</Filter>
+    </None>
+    <None Include="quests\quest_15.lua">
+      <Filter>Quest Scripts</Filter>
     </None>
   </ItemGroup>
 </Project>

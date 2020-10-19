@@ -344,34 +344,6 @@ namespace le_hero {
         this->selected_action = CharacterActionTypes::PASS;
     }
 
-    bool CharacterBattleHandler::use_item(uint8_t item_index)
-    {
-        if (effect::activate_item_effect(item_index, this)) {
-            this->base->remove_item(item_index, 1);
-            return true;
-        }
-
-        // return false if item has no effect
-        return false;
-    }
-
-	void CharacterBattleHandler::obtain_quest_prizes(uint32_t prize_coins,
-        uint16_t prize_experience,
-        std::vector<uint8_t> prize_items,
-        std::vector<uint8_t> prize_weapons)
-	{
-        this->base->gain_coins(prize_coins);
-        this->base->gain_exp(prize_experience);
-        
-        for (auto prize_item : prize_items) {
-            this->base->acquire_item(prize_item);
-        }
-
-        for (auto prize_weapon : prize_weapons) {
-            this->base->acquire_weapon(prize_weapon);
-        }
-	}
-
     void CharacterBattleHandler::select_action(enum CharacterActionTypes action)
     {
         if (this->ready) {

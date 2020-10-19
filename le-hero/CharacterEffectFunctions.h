@@ -12,6 +12,5 @@ namespace le_hero {
         extern bool activate_passive_ability_effect(std::shared_ptr<CharacterBattleHandler> self);
         extern bool activate_special_ability_effect(std::shared_ptr<CharacterBattleHandler> self, std::shared_ptr<CharacterBattleHandler> enemy);
         extern bool activate_status_effect(CharacterBattleHandler* self);
-        extern bool activate_item_effect(uint8_t index, CharacterBattleHandler* self);
     }
 }

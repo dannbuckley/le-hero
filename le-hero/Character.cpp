@@ -52,7 +52,6 @@ namespace le_hero {
 	{
 		// initialize Weapons Vault, Inventory, and Special Ability Library
 		this->vault = std::vector<bool>(game::get_num_weapons());
-		this->inventory = std::vector<uint8_t>(game::get_num_items());
 		this->library = std::vector<bool>(game::get_num_special_abilities());
 
 		// initialize level to 1
@@ -71,7 +70,6 @@ namespace le_hero {
 		this->acquired_ability = game::get_special_ability(meta.special_ability_index);
 		this->coins = meta.coins;
 		this->vault = meta.vault;
-		this->inventory = meta.inventory;
 		this->library = meta.library;
 
 		// update level
@@ -81,8 +79,7 @@ namespace le_hero {
 	uint16_t Character::calculate_exp_at_level(uint8_t _level)
 	{
 		float exp = (float)_level;
-		exp = pow(exp, 2);
-		exp /= 2.0f;
+		exp = (exp * exp) / 2.0f;
 		exp += (float)_level;
 		return (uint16_t)ceilf(exp);
 	}
@@ -292,44 +289,6 @@ namespace le_hero {
 				return false;
 			}
 		}
-	}
-
-	// Checks if the Character has the item located at item_index
-	bool Character::has_item(uint8_t item_index)
-	{
-		return this->inventory[item_index] > 0;
-	}
-
-	// Checks if the Character is eligible to use the given item
-	bool Character::item_availability_level_check(uint8_t item_level)
-	{
-		return this->level >= item_level;
-	}
-
-	// Adds the given item located at item_index to the Character's Inventory
-	bool Character::acquire_item(uint8_t item_index)
-	{
-		if (this->inventory[item_index] < ITEM_AMOUNT_MAX) {
-			++this->inventory[item_index];
-			return true;
-		}
-		return false;
-	}
-
-	// Buys the item located at item_index and adds it to the Character's inventory
-	bool Character::buy_item(uint8_t item_index)
-	{
-		return false;
-	}
-
-	// Removes amount of item located at item_index from the Character's Inventory
-	bool Character::remove_item(uint8_t item_index, uint8_t amount)
-	{
-		if (this->inventory[item_index] >= amount) {
-			this->inventory[item_index] -= amount;
-			return true;
-		}
-		return false;
 	}
 
 	bool Character::has_weapon(CharacterWeapon _weapon)

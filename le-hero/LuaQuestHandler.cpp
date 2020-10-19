@@ -103,98 +103,6 @@ namespace le_hero {
 			return true;
         }
 
-		// Parses each Quest prize item found in quest file
-        bool LuaQuestHandler::parse_quest_prize_items(lua_State* L, quest::Quest& q)
-        {
-			size_t num_prize_items = 0;
-			try {
-				num_prize_items = (size_t)LuaHelpers::get_number_value_from_table(L, "NumPrizeItems");
-			}
-			catch (exception::unexpected_type_error& e) {
-				std::cout << e.what() << std::endl;
-				return false;
-			}
-
-			// get PrizeItems subtable
-			lua_pushstring(L, "PrizeItems");
-			lua_gettable(L, -2);
-
-			if (lua_istable(L, -1)) {
-				for (unsigned int i = 0; i < num_prize_items; i++) {
-					// push prize item index number onto lua stack
-					lua_pushnumber(L, i);
-					lua_gettable(L, -2);
-
-					if (lua_isnumber(L, -1)) {
-						// save prize item to Quest object vector
-						q.prize_items.push_back((uint8_t)lua_tonumber(L, -1));
-
-						// pop value off lua stack
-						lua_pop(L, 1);
-					}
-					else {
-						// value is incorrect type
-						return false;
-					}
-				}
-			}
-			else {
-				// PrizeItems table not found
-				return false;
-			}
-
-			// pop table off lua stack
-			lua_pop(L, 1);
-
-			return true;
-        }
-
-		// Parses each Quest prize weapon found in quest file
-        bool LuaQuestHandler::parse_quest_prize_weapons(lua_State* L, quest::Quest& q)
-        {
-			size_t num_prize_weapons = 0;
-			try {
-				num_prize_weapons = (size_t)LuaHelpers::get_number_value_from_table(L, "NumPrizeWeapons");
-			}
-			catch (exception::unexpected_type_error& e) {
-				std::cout << e.what() << std::endl;
-				return false;
-			}
-
-			// get PrizeWeapons subtable
-			lua_pushstring(L, "PrizeWeapons");
-			lua_gettable(L, -2);
-
-			if (lua_istable(L, -1)) {
-				for (unsigned int i = 0; i < num_prize_weapons; i++) {
-					// push prize weapon index number onto lua stack
-					lua_pushnumber(L, i);
-					lua_gettable(L, -2);
-
-					if (lua_isnumber(L, -1)) {
-						// save prize weapon to Quest object vector
-						q.prize_weapons.push_back((uint8_t)lua_tonumber(L, -1));
-
-						// pop value off lua stack
-						lua_pop(L, 1);
-					}
-					else {
-						// value is incorrect type
-						return false;
-					}
-				}
-			}
-			else {
-				// PrizeWeapons table not found
-				return false;
-			}
-
-			// pop table off lua stack
-			lua_pop(L, 1);
-
-			return true;
-        }
-
 		// Parses quest file
         bool LuaQuestHandler::parse_quest_file(std::string quest_file, quest::Quest& q)
         {
@@ -214,20 +122,9 @@ namespace le_hero {
 						if (lua_istable(L, -1)) {
 							// construct Quest from lua table
 							q.description = LuaHelpers::get_string_value_from_table(L, "Description");
-							q.recommended_level = (uint8_t)LuaHelpers::get_number_value_from_table(L, "RecommendedLevel");
 							q.quest_terrain = (CharacterElements)LuaHelpers::get_number_value_from_table(L, "QuestTerrain");
-							q.prize_coins = (uint32_t)LuaHelpers::get_number_value_from_table(L, "PrizeCoins");
-							q.prize_experience = (uint16_t)LuaHelpers::get_number_value_from_table(L, "PrizeExp");
 
 							if (!parse_quest_enemy_info_objects(L, q)) {
-								return false;
-							}
-
-							if (!parse_quest_prize_items(L, q)) {
-								return false;
-							}
-
-							if (!parse_quest_prize_weapons(L, q)) {
 								return false;
 							}
 

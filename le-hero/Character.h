@@ -25,7 +25,6 @@ namespace le_hero {
         uint8_t special_ability_index;
         uint32_t coins;
         std::vector<bool> vault;
-        std::vector<uint8_t> inventory;
         std::vector<bool> library;
     };
 
@@ -35,7 +34,6 @@ namespace le_hero {
         const uint32_t COINS_MAX = 1000000000U;
         const uint16_t EXPERIENCE_MAX = 31500U;
         const uint8_t LEVEL_MAX = 250U;
-        const uint8_t ITEM_AMOUNT_MAX = 100U;
 
         CharacterSpecialAbility acquired_ability;
         uint32_t coins = 0;
@@ -48,7 +46,6 @@ namespace le_hero {
         CharacterWeapon weapon;
 
         std::vector<bool> vault;
-        std::vector<uint8_t> inventory;
         std::vector<bool> library;
 
         double _calculate_correction_value(uint8_t _level);        
@@ -83,15 +80,6 @@ namespace le_hero {
         bool learn_special_ability(uint8_t new_spec_abil);
         bool spend_coins(uint32_t coin_amount);
         bool verify_special_ability_requirements(CharacterSpecialAbilityRequirements reqs);
-
-        /* Item Inventory */
-
-        bool has_item(uint8_t item_index);
-        bool item_availability_level_check(uint8_t item_level);
-
-        bool acquire_item(uint8_t item_index);
-        bool buy_item(uint8_t item_index);
-        bool remove_item(uint8_t item_index, uint8_t amount);
 
         /* Weapons Vault */
 

@@ -12,13 +12,8 @@ namespace le_hero {
         struct Quest {
             std::string name;
             std::string description;
-            std::vector<CharacterMeta> enemy_info;
-            uint8_t recommended_level = 0;
             enum CharacterElements quest_terrain = CharacterElements::BASIC;
-            uint32_t prize_coins = 0;
-            uint16_t prize_experience = 0;
-            std::vector<uint8_t> prize_items;
-            std::vector<uint8_t> prize_weapons;
+            std::vector<CharacterMeta> enemy_info;
         };
 
         struct QuestEnemyInfo {
